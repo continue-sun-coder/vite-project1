@@ -1,0 +1,103 @@
+module.exports = {
+  extends: [
+    'stylelint-config-standard-scss',      // SCSS 标准规则（包含 CSS 规则）
+    'stylelint-config-standard-vue',       // Vue 文件支持
+  ],
+  plugins: [
+    'stylelint-order',                      // 属性排序插件
+  ],
+  ignoreFiles: [
+    '**/*.js',
+    '**/*.jsx',
+    '**/*.ts',
+    '**/*.tsx',
+    '**/*.json',
+    '**/*.md',
+    '**/*.yaml',
+    'node_modules/**',
+    'dist/**',
+    'public/**',
+  ],
+  rules: {
+    // ---------- 与 Prettier 兼容（替代废弃的 stylelint-config-prettier）----------
+    'indentation': null,
+    'linebreaks': null,
+    'space-before-function-paren': null,
+    
+    // ---------- 自定义规则 ----------
+    // 在 css 中使用 v-bind，不报错
+    'value-keyword-case': null,
+    
+    // 禁止在具有较高优先级的选择器后出现被其覆盖的较低优先级的选择器
+    'no-descending-specificity': null,
+    
+    // 要求或禁止 URL 的引号
+    'function-url-quotes': 'always',
+    
+    // 关闭禁止空源码
+    'no-empty-source': null,
+    
+    // 关闭强制选择器类名的格式
+    'selector-class-pattern': null,
+    
+    // 禁止未知的属性
+    'property-no-unknown': null,
+    
+    // 大括号之前必须有一个空格
+    'block-opening-brace-space-before': 'always',
+    
+    // 关闭属性值前缀检查（如 -webkit-box）
+    'value-no-vendor-prefix': null,
+    
+    // 关闭属性前缀检查（如 -webkit-mask）
+    'property-no-vendor-prefix': null,
+    
+    // 不允许未知的选择器，但忽略 :global、:v-deep、:deep
+    'selector-pseudo-class-no-unknown': [
+      true,
+      {
+        ignorePseudoClasses: ['global', 'v-deep', 'deep'],
+      },
+    ],
+    
+    // ---------- 属性排序规则 ----------
+    'order/properties-order': [
+      'position',
+      'top',
+      'right',
+      'bottom',
+      'left',
+      'z-index',
+      'display',
+      'flex',
+      'flex-direction',
+      'justify-content',
+      'align-items',
+      'width',
+      'height',
+      'margin',
+      'margin-top',
+      'margin-right',
+      'margin-bottom',
+      'margin-left',
+      'padding',
+      'padding-top',
+      'padding-right',
+      'padding-bottom',
+      'padding-left',
+      'border',
+      'border-top',
+      'border-right',
+      'border-bottom',
+      'border-left',
+      'background',
+      'color',
+      'font-size',
+      'font-family',
+      'text-align',
+      'line-height',
+      'opacity',
+      'transition',
+    ],
+  },
+}

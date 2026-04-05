@@ -1,0 +1,12 @@
+node_modules
+dist
+html
+public
+*.js
+*.ts
+*.json
+*.md
+*.svg
+*.png
+*.jpg
+*.config.js
