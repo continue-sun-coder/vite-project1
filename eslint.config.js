@@ -11,6 +11,9 @@ export default defineConfig([
     plugins: { js }, 
     extends: ["js/recommended"], languageOptions: { globals: { ...globals.browser, ...globals.node } } 
   },
+  {
+    ignores:["**/node_modules/**", "**/dist/**", "**/public/**"]
+  },
   // js推荐规则
   js.configs.recommended,
   // ts推荐规则

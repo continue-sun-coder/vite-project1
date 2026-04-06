@@ -1,14 +1,18 @@
+// 修改后的 request.ts 文件
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+
 //创建axios实例
-let request = axios.create({
+const request = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 5000,
 })
+
 //请求拦截器
 request.interceptors.request.use((config) => {
   return config
 })
+
 //响应拦截器
 request.interceptors.response.use(
   (response) => {
@@ -16,8 +20,9 @@ request.interceptors.response.use(
   },
   (error) => {
     //处理网络错误
-    let msg = ''
-    let status = error.response.status
+    const status = error.response?.status
+    let msg: string
+
     switch (status) {
       case 401:
         msg = 'token过期'
@@ -34,6 +39,7 @@ request.interceptors.response.use(
       default:
         msg = '无网络'
     }
+
     ElMessage({
       type: 'error',
       message: msg,
@@ -41,4 +47,5 @@ request.interceptors.response.use(
     return Promise.reject(error)
   },
 )
+
 export default request
