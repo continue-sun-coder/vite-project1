@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --open",
     "build": "vue-tsc && vite build",
+    "build:test": "vue-tsc && vite build --mode test",
+    "build:pro": "vue-tsc && vite build --mode production",
     "preview": "vite preview",
     "lint": "eslint src",
     "fix": "eslint src --fix",
@@ -20,7 +22,8 @@
     "@element-plus/icons-vue": "^2.3.2",
     "axios": "^1.14.0",
     "element-plus": "^2.13.6",
-    "vue": "^3.5.30"
+    "vue": "^3.5.30",
+    "vue-router": "^5.0.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
