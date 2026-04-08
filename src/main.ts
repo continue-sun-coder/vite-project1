@@ -7,10 +7,12 @@ import '@/styles/index.scss'
 // 全局注册组件
 import globalComponents from '@/components'
 import router from '@/router'
+import pinia from '@/store'
 import App from '@/App.vue'
 
 const app = createApp(App)
 app.use(ElementPlus, { locale: zhCn })
 app.use(globalComponents)
+app.use(pinia)
 app.use(router)
 app.mount('#app')
