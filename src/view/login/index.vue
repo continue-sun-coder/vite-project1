@@ -13,7 +13,15 @@
             <el-input :prefix-icon="Lock" v-model="loginForm.password" show-password></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button :loading="loading" class="login_btn" type="primary" size="default" @click="login">登录</el-button>
+            <el-button
+              :loading="loading"
+              class="login_btn"
+              type="primary"
+              size="default"
+              @click="login"
+            >
+              登录
+            </el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -27,10 +35,11 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
+import { getGreeting } from '@/utils/time'
 
 let userStore = useUserStore()
- let $router = useRouter()
- let loading = ref(false)
+let $router = useRouter()
+let loading = ref(false)
 
 let loginForm = reactive({
   username: 'admin',
@@ -43,14 +52,14 @@ const login = async () => {
   // 通知仓库发登录请求
   // 请求成功，跳转到首页，并提示登录成功
   // 请求失败，提示登录失败
-   let result = userStore.userLogin(loginForm)
-   console.log(result)
-   try {
-     await userStore.userLogin(loginForm)
+  let result = userStore.userLogin(loginForm)
+  console.log(result)
+  try {
+    await userStore.userLogin(loginForm)
     //  编程式导航到首页
-     $router.push('/')
+    $router.push('/')
     ElNotification({
-      title: '登录成功',
+      title: `Hi, ${getGreeting()}`,
       message: `${loginForm.username}，欢迎回来！`,
       type: 'success',
     })
