@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="12" :xs="0"></el-col>
       <el-col :span="12" :xs="24">
-        <el-form class="login_form" :model="loginForm">
+        <el-form class="login_form" :model="loginForm" :rules="rules" ref="loginForms">
           <h1>Hello</h1>
           <h2>欢迎来到后台管理系统</h2>
           <el-form-item prop="username">
@@ -40,6 +40,7 @@ import { getGreeting } from '@/utils/time'
 let userStore = useUserStore()
 let $router = useRouter()
 let loading = ref(false)
+let loginForms = ref()
 
 let loginForm = reactive({
   username: 'admin',
@@ -47,13 +48,13 @@ let loginForm = reactive({
 })
 
 const login = async () => {
+  // 表单验证：保证全部表单项都合法才能发登录请求
+  await loginForms.value.validate()
   // 登录加载效果
   loading.value = true
   // 通知仓库发登录请求
   // 请求成功，跳转到首页，并提示登录成功
   // 请求失败，提示登录失败
-  let result = userStore.userLogin(loginForm)
-  console.log(result)
   try {
     await userStore.userLogin(loginForm)
     //  编程式导航到首页
@@ -72,6 +73,43 @@ const login = async () => {
       type: 'error',
     })
   }
+}
+
+// 自定义校验规则：用户名必须以字母开头，长度在 3 - 20 之间
+const validatorUserName = (rule: any, value: any, callback: any) => {
+  // rule: 校验规则对象
+  // value: 当前校验的表单项的值
+  // callback: 校验完成后的回调函数，传入一个 Error 对象表示校验失败，传入 nothing 或 undefined 表示校验成功
+  if (!value) {
+    callback(new Error('请输入用户名'))
+  } else if (!/^[a-zA-Z]/.test(value)) {
+    callback(new Error('用户名必须以字母开头'))
+  } else if (value.length < 3 || value.length > 20) {
+    callback(new Error('用户名长度在 3 - 20 之间'))
+  } else {
+    callback()
+  }
+}
+
+const validatorPassword = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    callback(new Error('请输入密码'))
+  } else if (value.length < 6 || value.length > 20) {
+    callback(new Error('密码长度在 6 - 20 之间'))
+  } else {
+    callback()
+  }
+}
+
+const rules = {
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { trigger: 'change', validator: validatorUserName },
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { trigger: 'change', validator: validatorPassword },
+  ],
 }
 </script>
 
