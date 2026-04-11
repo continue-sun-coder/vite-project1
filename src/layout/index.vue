@@ -3,18 +3,29 @@
     <!-- 左侧菜单 -->
     <div class="layout_slider">
       <Logo></Logo>
+      <el-scrollbar class="scrollbar">
+          <el-menu background-color="#001529" text-color="white" active-text-color="#409EFF" router>
+            <!-- 根据路由动态生成菜单 -->
+             <NavMenu :menuList="userStore.menuRoutes"></NavMenu>
+          </el-menu>
+      </el-scrollbar>
     </div>
     <!-- 头部导航 -->
     <div class="layout_header">12345</div>
     <!-- 内容展示区 -->
     <div class="layout_main">
-      <p style="height: 10000000000px; background-color: yellow">23456789</p>
+      <Main></Main>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Logo from './logo/index.vue'
+import NavMenu from './menu/index.vue'
+import Main from './main/index.vue'
+
+import { useUserStore } from '@/store/modules/user'
+let userStore = useUserStore()
 </script>
 
 <style scoped lang="scss">
@@ -32,6 +43,26 @@ import Logo from './logo/index.vue'
     width: $base-menu-width;
     height: 100vh;
     background: $base-menu-bg-color;
+
+    .scrollbar {
+            width: 100%;
+            height: calc(100vh - $base-menu-logo-height);
+
+            .el-menu {
+                border-right: none;
+            }
+              .el-menu-item {
+                color: white !important;
+                
+                &:hover {
+                  color: #409EFF !important; // 悬停色
+                }
+                
+                &.is-active {
+                  color: #409EFF !important; // 激活色
+                }
+              }
+        }
   }
   // 头部导航
   .layout_header {

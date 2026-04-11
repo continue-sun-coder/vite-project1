@@ -5,8 +5,13 @@ import { reqLogin } from '@/api/user'
 // 引入数据类型
 import type { loginForm, loginResponseData } from '@/api/user/type'
 import type { userState } from './types/type'
+
 // 引入工具函数
 import { GET_TOKEN, SET_TOKEN } from '@/utils/token'
+
+// 引入路由（常量路由），因为以后
+import { constantRoutes } from '@/router/routes'
+import { reactive } from 'vue'
 // 创建用户小仓库
 export const useUserStore = defineStore('User', {
   // 小仓库存储数据的地方
@@ -14,6 +19,7 @@ export const useUserStore = defineStore('User', {
     return {
       //直接获取token，刷新页面时，vuex中的token会丢失，所以需要从本地存储获取token
       token: GET_TOKEN(), //用户唯一标识token
+      menuRoutes: constantRoutes,
     }
   },
   // 异步|逻辑的地方
