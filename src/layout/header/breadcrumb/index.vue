@@ -12,10 +12,12 @@
         v-show="item.meta.title"
         :to="item.path"
       >
-        <el-icon class="breadcrumb-icon">
+      <template #default>
+        <el-icon class="breadcrumb-icon" v-if="item.meta.icon">
           <component :is="item.meta.icon"></component>
         </el-icon>
         <span>{{ item.meta.title }}</span>
+      </template>
       </el-breadcrumb-item>
     </el-breadcrumb>
   </div>
@@ -30,6 +32,7 @@ const changeIcon = () => {
   layoutSettingStore.flod = !layoutSettingStore.flod
 }
 let $route = useRoute()
+
 defineOptions({
   name: 'Breadcrumb',
 })

@@ -3,4 +3,6 @@ import type { RouteRecordRaw } from 'vue-router'
 export interface userState {
   token: string | null
   menuRoutes: RouteRecordRaw[] // 首页动态菜单的路由定义
+  username: string
+  avatar: string
 }

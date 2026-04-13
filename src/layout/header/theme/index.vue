@@ -3,19 +3,19 @@
     <el-button size="small" icon="Refresh" circle @click="updateRefsh"></el-button>
     <el-button size="small" icon="FullScreen" circle @click="fullScreen"></el-button>
     <el-button size="small" icon="Setting" circle></el-button>
-    <img src="../../../../public/logo.png" alt="" >
-        <el-dropdown>
-        <span class="el-dropdown-link">
-              猫猫
-            <el-icon class="el-icon--right">
-                <arrow-down />
-            </el-icon>
-        </span>
-        <template #dropdown>
-            <el-dropdown-menu>
-                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-        </template>
+    <img :src="userStore.avatar" alt="" />
+    <el-dropdown>
+      <span class="el-dropdown-link">
+        {{ userStore.username }}
+        <el-icon class="el-icon--right">
+          <arrow-down />
+        </el-icon>
+      </span>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
     </el-dropdown>
   </div>
 </template>
@@ -24,10 +24,13 @@
 defineOptions({
   name: 'Theme',
 })
-// import { useUserStore } from '@/store/modules/user'
+import { useRouter, useRoute } from 'vue-router'
+import { useUserStore } from '@/store/modules/user'
 import { useLayoutSettingStore } from '@/store/modules/setting'
 let layoutSettingStore = useLayoutSettingStore()
-// let userStore = useUserStore()
+let userStore = useUserStore()
+let $router = useRouter()
+let $route = useRoute()
 
 const updateRefsh = () => {
   layoutSettingStore.refsh = !layoutSettingStore.refsh
@@ -37,16 +40,20 @@ const updateRefsh = () => {
 const fullScreen = () => {
   // DOM对象的一个属性：可以用来判断当前是不是全屏模式
   let full = document.fullscreenElement
-  if(!full){
+  if (!full) {
     document.documentElement.requestFullscreen()
-  }else{
+  } else {
     // 退出全屏模式
     document.exitFullscreen()
   }
 }
 
 const logout = () => {
-  console.log('退出登录')
+  // 1.向服务器发请求：退出登录接口
+  // 2.清除本地的token
+  // 3.跳转到登录页
+  userStore.userLogout()
+  $router.push({ path: '/login', query: { redirect: $route.path } })
 }
 </script>
 
@@ -66,7 +73,7 @@ const logout = () => {
   .el-dropdown-link {
     display: flex;
     align-items: center;
-    font-size: 18px; 
+    font-size: 18px;
     cursor: pointer;
   }
 }
@@ -74,7 +81,7 @@ const logout = () => {
 /* 调整按钮图标大小 */
 :deep(.el-button) {
   font-size: 18px;
-  border: 1px solid #e0e0e0; 
+  border: 1px solid #e0e0e0;
   padding: 15px; /* 增加内边距让按钮更大 */
 }
 </style>

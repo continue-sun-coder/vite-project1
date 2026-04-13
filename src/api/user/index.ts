@@ -9,9 +9,9 @@ import type { loginForm, loginResponseData, userReponseData } from './type'
 enum API {
   LOGIN_URL = '/user/login',
 
-  USERINFO_URL = '/api/user/info',
+  USERINFO_URL = '/user/info',
 
-  LOGOUT_URL = '/api/user/logout',
+  LOGOUT_URL = '/user/logout',
 }
 //登录接口
 export const reqLogin = (data: loginForm) =>

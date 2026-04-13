@@ -3,13 +3,13 @@
   <router-view v-slot="{ Component }">
     <transition name="fade">
       <!-- 渲染layout一级路由组件的子路由 -->
-      <component :is="Component" v-if="flag"/>
+      <component :is="Component" v-if="flag" />
     </transition>
   </router-view>
 </template>
 
 <script setup lang="ts">
-import { watch, ref, nextTick} from 'vue'
+import { watch, ref, nextTick } from 'vue'
 import { useLayoutSettingStore } from '@/store/modules/setting'
 let layoutSettingStore = useLayoutSettingStore()
 // 定义一个flag来控制组件的渲染
@@ -23,7 +23,7 @@ watch(
     nextTick(() => {
       flag.value = true
     })
-  }
+  },
 )
 </script>
 
