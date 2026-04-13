@@ -1,14 +1,14 @@
 <template>
   <div class="logo" v-if="setting.logoHidden">
     <img :src="setting.logo" alt="" />
-    <p :class="{flod:layoutSettingStore.flod}">{{ setting.title }}</p>
+    <p :class="{ flod: layoutSettingStore.flod }">{{ setting.title }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import setting from '@/setting'
 defineOptions({
-  name: 'Logo'
+  name: 'Logo',
 })
 
 import { useLayoutSettingStore } from '@/store/modules/setting'
@@ -34,7 +34,7 @@ let layoutSettingStore = useLayoutSettingStore()
     opacity: 1;
     white-space: nowrap;
     overflow: hidden;
-    max-width:  $base-menu-width - 90px;
+    max-width: $base-menu-width - 90px;
 
     &.flod {
       opacity: 0;

@@ -1,21 +1,28 @@
 <template>
   <div class="layout_container">
     <!-- 左侧菜单 -->
-    <div class="layout_slider" :class="{flod:layoutSettingStore.flod}">
+    <div class="layout_slider" :class="{ flod: layoutSettingStore.flod }">
       <Logo></Logo>
       <el-scrollbar class="scrollbar">
-        <el-menu :default-active="$route.path" :collapse="layoutSettingStore.flod" background-color="#001529" text-color="white" active-text-color="#409EFF" router>
+        <el-menu
+          :default-active="$route.path"
+          :collapse="layoutSettingStore.flod"
+          background-color="#001529"
+          text-color="white"
+          active-text-color="#409EFF"
+          router
+        >
           <!-- 根据路由动态生成菜单 -->
           <NavMenu :menuList="userStore.menuRoutes"></NavMenu>
         </el-menu>
       </el-scrollbar>
     </div>
     <!-- 头部导航 -->
-    <div class="layout_header" :class="{flod:layoutSettingStore.flod}">
+    <div class="layout_header" :class="{ flod: layoutSettingStore.flod }">
       <NavHeader></NavHeader>
     </div>
     <!-- 内容展示区 -->
-    <div class="layout_main" :class="{flod:layoutSettingStore.flod}">
+    <div class="layout_main" :class="{ flod: layoutSettingStore.flod }">
       <Main></Main>
     </div>
   </div>
@@ -35,7 +42,7 @@ let $route = useRoute()
 let layoutSettingStore = useLayoutSettingStore()
 
 defineOptions({
-  name: 'Layout'
+  name: 'Layout',
 })
 </script>
 
@@ -65,7 +72,7 @@ defineOptions({
     }
 
     &.flod {
-      width: $base-menu-flod-width;;
+      width: $base-menu-flod-width;
     }
   }
   // 头部导航
@@ -75,7 +82,7 @@ defineOptions({
     top: 0;
     width: calc(100% - $base-menu-width);
     height: $base-header-height;
-    color:black;
+    color: black;
 
     &.flod {
       left: $base-menu-flod-width;
@@ -99,7 +106,6 @@ defineOptions({
       left: $base-menu-flod-width;
       width: calc(100% - $base-menu-flod-width);
     }
-
   }
 }
 </style>

@@ -13,7 +13,7 @@
 import Theme from './theme/index.vue'
 import Breadcrumb from './breadcrumb/index.vue'
 defineOptions({
-  name: 'NavHeader'
+  name: 'NavHeader',
 })
 </script>
 
@@ -23,15 +23,16 @@ defineOptions({
   height: 100%;
   display: flex;
   justify-content: space-between;
-    .header_left {
-      display: flex;
-      align-items: center;
-      margin-left: 20px;
-    }
+  .header_left {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+  }
 
-    .header_right {
-        display: flex;
-        align-items: center;
-    }
+  .header_right {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+  }
 }
 </style>
