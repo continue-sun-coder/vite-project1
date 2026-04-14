@@ -12,12 +12,12 @@
         v-show="item.meta.title"
         :to="item.path"
       >
-      <template #default>
-        <el-icon class="breadcrumb-icon" v-if="item.meta.icon">
-          <component :is="item.meta.icon"></component>
-        </el-icon>
-        <span>{{ item.meta.title }}</span>
-      </template>
+        <template #default>
+          <el-icon class="breadcrumb-icon" v-if="item.meta.icon">
+            <component :is="item.meta.icon"></component>
+          </el-icon>
+          <span>{{ item.meta.title }}</span>
+        </template>
       </el-breadcrumb-item>
     </el-breadcrumb>
   </div>

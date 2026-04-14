@@ -51,6 +51,8 @@ export const useUserStore = defineStore('User', {
         this.username = res.data.checkUser.username
         this.avatar = res.data.checkUser.avatar
         return 'ok'
+      } else {
+        return Promise.reject(new Error('获取用户信息失败'))
       }
     },
     // 退出登录的方法

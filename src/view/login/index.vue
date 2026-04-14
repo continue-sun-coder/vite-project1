@@ -33,12 +33,13 @@
 import { useUserStore } from '@/store/modules/user'
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElNotification } from 'element-plus'
 import { getGreeting } from '@/utils/time'
 
 let userStore = useUserStore()
 let $router = useRouter()
+let $route = useRoute()
 let loading = ref(false)
 let loginForms = ref()
 
@@ -57,8 +58,10 @@ const login = async () => {
   // 请求失败，提示登录失败
   try {
     await userStore.userLogin(loginForm)
+    // 如果登录的时候，路由路径当中有query参数 redirect，说明用户是从某个需要登录的页面跳转过来的，登录成功后应该编程式导航回那个页面；如果没有，就导航到首页
+    let redirect = $route.query.redirect
     //  编程式导航到首页
-    $router.push('/')
+    $router.push({path: (redirect as string) || '/'})
     ElNotification({
       title: `Hi, ${getGreeting()}`,
       message: `${loginForm.username}，欢迎回来！`,

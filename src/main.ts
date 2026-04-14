@@ -8,6 +8,7 @@ import '@/styles/index.scss'
 import globalComponents from '@/components'
 import router from '@/router'
 import pinia from '@/store'
+import '@/permission'
 import App from '@/App.vue'
 
 const app = createApp(App)
