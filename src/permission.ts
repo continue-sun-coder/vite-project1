@@ -35,7 +35,7 @@ router.beforeEach(async (to, from) => {
           return true
         } catch (error) {
           // tokeng过期了，获取不到用户信息了
-          userStore.userLogout()
+          await userStore.userLogout()
           return { path: '/login', query: { redirect: to.path } }
         }
       }

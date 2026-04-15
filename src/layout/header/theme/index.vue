@@ -48,11 +48,11 @@ const fullScreen = () => {
   }
 }
 
-const logout = () => {
+const logout = async () => {
   // 1.向服务器发请求：退出登录接口
   // 2.清除本地的token
   // 3.跳转到登录页
-  userStore.userLogout()
+  await userStore.userLogout()
   $router.push({ path: '/login', query: { redirect: $route.path } })
 }
 </script>

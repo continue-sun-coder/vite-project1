@@ -45,7 +45,7 @@ let loginForms = ref()
 
 let loginForm = reactive({
   username: 'admin',
-  password: '1234567u8ii9o',
+  password: '111111',
 })
 
 const login = async () => {
@@ -61,7 +61,7 @@ const login = async () => {
     // 如果登录的时候，路由路径当中有query参数 redirect，说明用户是从某个需要登录的页面跳转过来的，登录成功后应该编程式导航回那个页面；如果没有，就导航到首页
     let redirect = $route.query.redirect
     //  编程式导航到首页
-    $router.push({path: (redirect as string) || '/'})
+    $router.push({ path: (redirect as string) || '/' })
     ElNotification({
       title: `Hi, ${getGreeting()}`,
       message: `${loginForm.username}，欢迎回来！`,
@@ -70,6 +70,7 @@ const login = async () => {
     loading.value = false
   } catch (error) {
     loading.value = false
+    console.log(error)
     ElNotification({
       title: '登录失败',
       message: (error as Error).message,
