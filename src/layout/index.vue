@@ -97,7 +97,7 @@ defineOptions({
     width: calc(100% - $base-menu-width);
     height: calc(100vh - $base-header-height);
     padding: 20px;
-    background: green;
+    // background: green;
     overflow: auto;
     box-sizing: border-box;
     transition: all 0.3s;

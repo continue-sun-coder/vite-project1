@@ -30,8 +30,9 @@ video {
 }
 
 img {
-  display: block;
+  // display: block;  // 让 Upload 组件的图片能正常显示
   border: 0;
+  max-width: 100%;
 }
 
 h1,
@@ -39,12 +40,7 @@ h2,
 h3,
 h4,
 h5,
-h6 {
-  margin: 0;
-  padding: 0;
-  font-weight: normal;
-}
-
+h6,
 p {
   margin: 0;
   padding: 0;
@@ -81,23 +77,18 @@ a {
   outline: 0;
 }
 
+//保留基础重置，但不强制改 padding 和背景色
 button,
 input,
 select,
 textarea {
   margin: 0;
   font-size: inherit;
+  font-family: inherit;
 }
 
-button,
-html [type="button"],
-[type="reset"],
-[type="submit"] {
-  padding: 0;
-  border: 0;
-  // color: inherit;
-  background-color: transparent;
-  -webkit-appearance: button;
+// 删掉了强制透明背景和 padding:0，避免误伤 Element Plus
+button {
   cursor: pointer;
 }
 
@@ -107,25 +98,15 @@ input::-moz-focus-inner {
   padding: 0;
 }
 
-input {
+//只重置原生 input 的内边距，不影响 el-input
+input:not([class*="el-"]) {
   padding: 0;
   line-height: normal;
-
-  &::-webkit-input-placeholder {
-    font-weight: 300;
-  }
-
-  &::-ms-input-placeholder {
-    font-weight: 300;
-  }
-
-  &::-moz-placeholder {
-    font-weight: 300;
-  }
 }
 
 [type="number"] {
   -moz-appearance: textfield;
+  appearance: none;
 
   &::-webkit-inner-spin-button,
   &::-webkit-outer-spin-button {
@@ -137,6 +118,7 @@ input {
 
 [type="search"] {
   -webkit-appearance: textfield;
+  appearance: textfield;
 
   &::-webkit-search-cancel-button,
   &::-webkit-search-decoration {
@@ -147,12 +129,12 @@ input {
 textarea {
   overflow: auto;
   resize: none;
-  -webkit-appearance: none;
 }
 
 select {
   -webkit-appearance: none;
   background-color: #fff;
+  appearance: none;
 }
 
 table {
