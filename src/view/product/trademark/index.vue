@@ -16,7 +16,12 @@
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template v-slot="{ row, $index }">
-          <el-button type="warning" size="small" icon="Edit" @click="updateTrademark(row)"></el-button>
+          <el-button
+            type="warning"
+            size="small"
+            icon="Edit"
+            @click="updateTrademark(row)"
+          ></el-button>
           <el-button type="danger" size="small" icon="Delete"></el-button>
         </template>
       </el-table-column>
@@ -39,12 +44,17 @@
     title：对话框的标题
 
   -->
-  <el-dialog v-model="dialogVisible" :title="trademarkParams.id? '修改品牌' : '添加品牌'" width="500" :before-close="handleClose">
-    <el-form ref="formRef" :model="form" label-width="auto">
-      <el-form-item label="品牌名称" prop="name">
+  <el-dialog
+    v-model="dialogVisible"
+    :title="trademarkParams.id ? '修改品牌' : '添加品牌'"
+    width="500"
+    :before-close="handleClose"
+  >
+    <el-form ref="formRef" :model="trademarkParams" :rules="rules" label-width="auto">
+      <el-form-item label="品牌名称" prop="tmName">
         <el-input placeholder="请输入品牌名称" v-model="trademarkParams.tmName" />
       </el-form-item>
-      <el-form-item label="品牌LOGO" prop="zone">
+      <el-form-item label="品牌LOGO" prop="logoUrl">
         <!-- 上传图片 -->
         <!-- action: 文件上传的接口地址，要加上/api-->
         <el-upload
@@ -88,6 +98,8 @@ let trademarkParams = reactive<TradeMark>({
   tmName: '',
   logoUrl: '',
 })
+// 获取el-form组件的实例对象
+const formRef = ref()
 // 获取已有品牌的接口封装为一个函数，在任何情况下获取数据，调用函数即可
 const getHasTrademark = async (pager = 1) => {
   pageNo.value = pager
@@ -124,15 +136,25 @@ const addTrademark = () => {
   trademarkParams.logoUrl = ''
   // 如果用户点击完修改品牌再点击添加品牌，trademarkParams.id有值，所以在每次获取已有品牌数据之前，清空id的值
   trademarkParams.id = undefined
+
+  // 还需要清空掉表单校验结果
+  formRef.value?.clearValidate()
+  // 另一种写法
+  // nextTick(() => {
+  //   formRef.value.clearValidate()
+  // })
 }
 // 修改已有品牌
-const updateTrademark = (row:TradeMark) => {
+const updateTrademark = (row: TradeMark) => {
+  // 清除掉表单校验结果
+  formRef.value?.clearValidate()
+
   // 将已有品牌的数据回显到对话框组件中
   // trademarkParams.tmName = row.tmName
   // trademarkParams.logoUrl = row.logoUrl
   // trademarkParams.id = row.id
   // ES6语法，合并对象
-  Object.assign(trademarkParams, row) 
+  Object.assign(trademarkParams, row)
   dialogVisible.value = true
 }
 // 对话框组件：取消按钮的事件
@@ -144,6 +166,14 @@ const Cancel = () => {
 }
 // 对话框组件：确认按钮的事件
 const Confirm = async () => {
+  // 为什么这里不用清除表单校验结果？因为在上传图片成功之后，已经清除了对应图片的校验结果了
+  // 而且此时没有form对象，所以无法调用clearValidate方法了
+  
+  // 在发送请求之前，先进行表单校验，只有校验通过了才发送请求
+  // validate方法会返回一个Promise对象，校验成功，Promise对象状态为resolved；校验失败，Promise对象状态为rejected
+  // 定义一个变量接收validate方法返回的Promise对象，使用await进行等待，拿到校验结果
+  await formRef.value.validate()
+
   let result = await reqAddOrUpdateTrademark(trademarkParams)
   if (result.code == 200) {
     // 关闭对话框
@@ -196,7 +226,32 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
   console.log(response)
   trademarkParams.logoUrl = response.data
   //图片上传成功,清除掉对应图片校验结果
-  // formRef.value.clearValidate('logoUrl')
+  formRef.value.clearValidate('logoUrl')
+}
+
+// 自定义品牌名称校验方法
+// rule:校验规则对象，value:表单项的值，callback:放行函数
+// 触发时机：blur事件触发时，进行校验
+const validatorTmName = (rule: any, value: string, callback: any) => {
+  if (value.trim().length >= 2) {
+    callback()
+  } else {
+    callback(new Error('品牌名称必须至少2个字符'))
+  }
+}
+// 自定义LOGO上传校验方法
+const validatorLogoUrl = (rule: any, value: string, callback: any) => {
+  if (value) {
+    callback()
+  } else {
+    callback(new Error('请上传品牌LOGO'))
+  }
+}
+
+// 定义表单校验规则对象
+const rules = {
+  tmName: [{ required: true, message: '请输入品牌名称', trigger: 'blur', validator: validatorTmName }],
+  logoUrl: [{ required: true, message: '请上传品牌LOGO', validator: validatorLogoUrl }],
 }
 
 // el-upload 上传 http 请求头，携带 Token
