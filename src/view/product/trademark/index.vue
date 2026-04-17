@@ -22,7 +22,16 @@
             icon="Edit"
             @click="updateTrademark(row)"
           ></el-button>
-          <el-button type="danger" size="small" icon="Delete"></el-button>
+          <el-popconfirm 
+            :title="`您确定要删除 ${row.tmName} 吗？`" 
+            @confirm="deleteTrademark(row.id)" 
+            width="300px" 
+            icon="WarningFilled"         
+            >
+            <template #reference>
+              <el-button type="danger" size="small" icon="Delete"></el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -83,7 +92,7 @@
 import { ElMessage } from 'element-plus'
 import type { UploadProps } from 'element-plus'
 import { ref, onMounted, reactive } from 'vue'
-import { reqHasTrademark, reqAddOrUpdateTrademark } from '@/api/product/trademark'
+import { reqHasTrademark, reqAddOrUpdateTrademark, reqDeleteTrademark } from '@/api/product/trademark/index'
 import type { Records, TradeMark } from '@/api/product/trademark/type'
 // 定义分页相关的数据
 // pageNo:当前页码，limit:每页条数，total:总条数，trademarkArr:已有品牌的数据数组
@@ -168,7 +177,7 @@ const Cancel = () => {
 const Confirm = async () => {
   // 为什么这里不用清除表单校验结果？因为在上传图片成功之后，已经清除了对应图片的校验结果了
   // 而且此时没有form对象，所以无法调用clearValidate方法了
-  
+
   // 在发送请求之前，先进行表单校验，只有校验通过了才发送请求
   // validate方法会返回一个Promise对象，校验成功，Promise对象状态为resolved；校验失败，Promise对象状态为rejected
   // 定义一个变量接收validate方法返回的Promise对象，使用await进行等待，拿到校验结果
@@ -250,13 +259,39 @@ const validatorLogoUrl = (rule: any, value: string, callback: any) => {
 
 // 定义表单校验规则对象
 const rules = {
-  tmName: [{ required: true, message: '请输入品牌名称', trigger: 'blur', validator: validatorTmName }],
+  tmName: [
+    { required: true, message: '请输入品牌名称', trigger: 'blur', validator: validatorTmName },
+  ],
   logoUrl: [{ required: true, message: '请上传品牌LOGO', validator: validatorLogoUrl }],
 }
+
+//气泡确认框：删除品牌
+const deleteTrademark = async (id: number) => {
+  let result = await reqDeleteTrademark(id)
+  if (result.code == 200) {
+    ElMessage({
+      type: 'success',
+      message: '删除成功',
+    })
+    // 删除品牌后，获取当前页的数据
+    // 要是删除的是最后一页的最后一个品牌，删除后当前页就没有数据了，所以获取前一页的数据
+    // 如果全部删除了，获取第一页的数据
+    if(trademarkArr.value.length == 1 && pageNo.value > 1) {
+      pageNo.value--
+    }
+    getHasTrademark(pageNo.value)
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '删除失败',
+    })
+  }
+} 
 
 // el-upload 上传 http 请求头，携带 Token
 // 引入用户相关的仓库
 import { useUserStore } from '@/store/modules/user'
+import { pa } from 'element-plus/es/locale/index.mjs'
 // 获取用户相关的小仓库：获取仓库内部token，登录成功以后携带给服务器
 const userStore = useUserStore()
 const headers = { Token: userStore.token }
