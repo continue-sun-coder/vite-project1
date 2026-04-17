@@ -16,7 +16,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template v-slot="{ row, $index }">
-          <el-button type="warning" size="small" icon="Edit" @click="updateTrademark"></el-button>
+          <el-button type="warning" size="small" icon="Edit" @click="updateTrademark(row)"></el-button>
           <el-button type="danger" size="small" icon="Delete"></el-button>
         </template>
       </el-table-column>
@@ -39,7 +39,7 @@
     title：对话框的标题
 
   -->
-  <el-dialog v-model="dialogVisible" title="添加品牌" width="500" :before-close="handleClose">
+  <el-dialog v-model="dialogVisible" :title="trademarkParams.id? '修改品牌' : '添加品牌'" width="500" :before-close="handleClose">
     <el-form ref="formRef" :model="form" label-width="auto">
       <el-form-item label="品牌名称" prop="name">
         <el-input placeholder="请输入品牌名称" v-model="trademarkParams.tmName" />
@@ -90,10 +90,6 @@ let trademarkParams = reactive<TradeMark>({
 })
 // 获取已有品牌的接口封装为一个函数，在任何情况下获取数据，调用函数即可
 const getHasTrademark = async (pager = 1) => {
-  // 在每次添加品牌前，清空添加品牌的数据对象，就不用在Cancel, Confirm函数中重复代码了
-  trademarkParams.tmName = ''
-  trademarkParams.logoUrl = ''
-  
   pageNo.value = pager
   let result = await reqHasTrademark(pageNo.value, limit.value)
   console.log(result)
@@ -123,9 +119,20 @@ const sizeChange = () => {
 // 添加品牌
 const addTrademark = () => {
   dialogVisible.value = true
+  // 在每次添加品牌前，清空添加品牌的数据对象，就不用在Cancel, Confirm函数中重复代码了
+  trademarkParams.tmName = ''
+  trademarkParams.logoUrl = ''
+  // 如果用户点击完修改品牌再点击添加品牌，trademarkParams.id有值，所以在每次获取已有品牌数据之前，清空id的值
+  trademarkParams.id = undefined
 }
 // 修改已有品牌
-const updateTrademark = () => {
+const updateTrademark = (row:TradeMark) => {
+  // 将已有品牌的数据回显到对话框组件中
+  // trademarkParams.tmName = row.tmName
+  // trademarkParams.logoUrl = row.logoUrl
+  // trademarkParams.id = row.id
+  // ES6语法，合并对象
+  Object.assign(trademarkParams, row) 
   dialogVisible.value = true
 }
 // 对话框组件：取消按钮的事件
@@ -136,26 +143,27 @@ const Cancel = () => {
   // trademarkParams.logoUrl = ''
 }
 // 对话框组件：确认按钮的事件
-const Confirm = async() => {
+const Confirm = async () => {
   let result = await reqAddOrUpdateTrademark(trademarkParams)
-  if(result.code == 200){
+  if (result.code == 200) {
     // 关闭对话框
     dialogVisible.value = false
     // 弹出提示信息
     ElMessage({
       type: 'success',
-      message: '操作成功',
+      message: trademarkParams.id ? '修改成功' : '添加成功',
     })
     // 获取已有品牌的数据，更新页面
-    getHasTrademark()
+    // 如果trademarkParams.id有值，说明是修改已有品牌，获取当前页的数据；如果没有值，说明是添加品牌，获取第一页的数据
+    getHasTrademark(trademarkParams.id ? pageNo.value : 1)
     // // 清空添加品牌的数据对象
     // trademarkParams.tmName = ''
     // trademarkParams.logoUrl = ''
-  }else {
+  } else {
     // 提示用户操作失败
     ElMessage({
       type: 'error',
-      message: '操作失败',
+      message: trademarkParams.id ? '修改失败' : '添加失败',
     })
     // 关闭对话框
     dialogVisible.value = false
