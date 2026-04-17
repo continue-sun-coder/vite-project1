@@ -73,7 +73,7 @@
 import { ElMessage } from 'element-plus'
 import type { UploadProps } from 'element-plus'
 import { ref, onMounted, reactive } from 'vue'
-import { reqHasTrademark } from '@/api/product/trademark'
+import { reqHasTrademark, reqAddOrUpdateTrademark } from '@/api/product/trademark'
 import type { Records, TradeMark } from '@/api/product/trademark/type'
 // 定义分页相关的数据
 // pageNo:当前页码，limit:每页条数，total:总条数，trademarkArr:已有品牌的数据数组
@@ -90,6 +90,10 @@ let trademarkParams = reactive<TradeMark>({
 })
 // 获取已有品牌的接口封装为一个函数，在任何情况下获取数据，调用函数即可
 const getHasTrademark = async (pager = 1) => {
+  // 在每次添加品牌前，清空添加品牌的数据对象，就不用在Cancel, Confirm函数中重复代码了
+  trademarkParams.tmName = ''
+  trademarkParams.logoUrl = ''
+  
   pageNo.value = pager
   let result = await reqHasTrademark(pageNo.value, limit.value)
   console.log(result)
@@ -127,10 +131,35 @@ const updateTrademark = () => {
 // 对话框组件：取消按钮的事件
 const Cancel = () => {
   dialogVisible.value = false
+  // // 清空添加品牌的数据对象
+  // trademarkParams.tmName = ''
+  // trademarkParams.logoUrl = ''
 }
 // 对话框组件：确认按钮的事件
-const Confirm = () => {
-  dialogVisible.value = false
+const Confirm = async() => {
+  let result = await reqAddOrUpdateTrademark(trademarkParams)
+  if(result.code == 200){
+    // 关闭对话框
+    dialogVisible.value = false
+    // 弹出提示信息
+    ElMessage({
+      type: 'success',
+      message: '操作成功',
+    })
+    // 获取已有品牌的数据，更新页面
+    getHasTrademark()
+    // // 清空添加品牌的数据对象
+    // trademarkParams.tmName = ''
+    // trademarkParams.logoUrl = ''
+  }else {
+    // 提示用户操作失败
+    ElMessage({
+      type: 'error',
+      message: '操作失败',
+    })
+    // 关闭对话框
+    dialogVisible.value = false
+  }
 }
 // 上传图片成功之前触发的钩子，可以约束文件类型和大小
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
