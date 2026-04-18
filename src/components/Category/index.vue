@@ -50,18 +50,18 @@ onMounted(() => {
 const handlerC1Change = () => {
   // 需要将二级，三级的数据清空
   // 清空二级分类的选中项
-  categoryStore.c2Id=''
+  categoryStore.c2Id = ''
   // 清空三级分类的可选列表
-  categoryStore.c3Arr=[]
+  categoryStore.c3Arr = []
   // 清空三级分类的选中项
-  categoryStore.c3Id=''
+  categoryStore.c3Id = ''
   categoryStore.getC2Data()
 }
 
 // 获取三级分类的数据
 const handlerC2Change = () => {
   // 二级分类发生变化，清除三级分类数据
-  categoryStore.c3Id=''
+  categoryStore.c3Id = ''
   categoryStore.getC3Data()
 }
 </script>
