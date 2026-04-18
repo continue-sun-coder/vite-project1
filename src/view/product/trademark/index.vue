@@ -22,12 +22,12 @@
             icon="Edit"
             @click="updateTrademark(row)"
           ></el-button>
-          <el-popconfirm 
-            :title="`您确定要删除 ${row.tmName} 吗？`" 
-            @confirm="deleteTrademark(row.id)" 
-            width="300px" 
-            icon="WarningFilled"         
-            >
+          <el-popconfirm
+            :title="`您确定要删除 ${row.tmName} 吗？`"
+            @confirm="deleteTrademark(row.id)"
+            width="300px"
+            icon="WarningFilled"
+          >
             <template #reference>
               <el-button type="danger" size="small" icon="Delete"></el-button>
             </template>
@@ -92,7 +92,11 @@
 import { ElMessage } from 'element-plus'
 import type { UploadProps } from 'element-plus'
 import { ref, onMounted, reactive } from 'vue'
-import { reqHasTrademark, reqAddOrUpdateTrademark, reqDeleteTrademark } from '@/api/product/trademark/index'
+import {
+  reqHasTrademark,
+  reqAddOrUpdateTrademark,
+  reqDeleteTrademark,
+} from '@/api/product/trademark/index'
 import type { Records, TradeMark } from '@/api/product/trademark/type'
 // 定义分页相关的数据
 // pageNo:当前页码，limit:每页条数，total:总条数，trademarkArr:已有品牌的数据数组
@@ -276,7 +280,7 @@ const deleteTrademark = async (id: number) => {
     // 删除品牌后，获取当前页的数据
     // 要是删除的是最后一页的最后一个品牌，删除后当前页就没有数据了，所以获取前一页的数据
     // 如果全部删除了，获取第一页的数据
-    if(trademarkArr.value.length == 1 && pageNo.value > 1) {
+    if (trademarkArr.value.length == 1 && pageNo.value > 1) {
       pageNo.value--
     }
     getHasTrademark(pageNo.value)
@@ -286,7 +290,7 @@ const deleteTrademark = async (id: number) => {
       message: '删除失败',
     })
   }
-} 
+}
 
 // el-upload 上传 http 请求头，携带 Token
 // 引入用户相关的仓库

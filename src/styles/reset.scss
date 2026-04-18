@@ -79,9 +79,10 @@ a {
 
 //保留基础重置，但不强制改 padding 和背景色
 button,
-input,
-select,
-textarea {
+input:not([class*="el-"]),
+select:not([class*="el-"]),
+textarea:not([class*="el-"])
+{
   margin: 0;
   font-size: inherit;
   font-family: inherit;
@@ -126,18 +127,18 @@ input:not([class*="el-"]) {
   }
 }
 
-textarea {
+textarea:not([class*="el-"]) {
   overflow: auto;
   resize: none;
 }
 
-select {
+select:not([class*="el-"]) {
   -webkit-appearance: none;
   background-color: #fff;
   appearance: none;
 }
 
-table {
+table:not([class*="el-"]) {
   border-collapse: collapse;
   border-spacing: 0;
 }
