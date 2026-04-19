@@ -2,7 +2,7 @@
   <el-card>
     <el-form :inline="true">
       <el-form-item label="一级分类">
-        <el-select placeholder="请选择" v-model="categoryStore.c1Id" @change="handlerC1Change">
+        <el-select placeholder="请选择" v-model="categoryStore.c1Id" @change="handlerC1Change" :disabled="scene==0? false:true">
           <el-option
             v-for="item in categoryStore.c1Arr"
             :key="item.id"
@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="二级分类">
-        <el-select v-model="categoryStore.c2Id" placeholder="请选择" @change="handlerC2Change">
+        <el-select v-model="categoryStore.c2Id" placeholder="请选择" @change="handlerC2Change" :disabled="scene==0? false:true">
           <el-option
             v-for="item in categoryStore.c2Arr"
             :key="item.id"
@@ -22,7 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="三级分类">
-        <el-select placeholder="请选择" v-model="categoryStore.c3Id">
+        <el-select placeholder="请选择" v-model="categoryStore.c3Id" :disabled="scene==0? false:true">
           <el-option
             v-for="item in categoryStore.c3Arr"
             :key="item.id"
@@ -64,6 +64,9 @@ const handlerC2Change = () => {
   categoryStore.c3Id = ''
   categoryStore.getC3Data()
 }
+
+// 接收父组件传来的值
+defineProps(['scene'])
 </script>
 
 <style scoped lang="scss">
