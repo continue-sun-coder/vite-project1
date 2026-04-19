@@ -28,7 +28,7 @@
             <template #="{ row, $index }">
               <el-button type="warning" size="small" icon="Edit" @click="updateAttr(row)" />
               <el-popconfirm
-                :title="`您确定要删除 ${row.valueName} 吗？`"
+                :title="`您确定要删除 ${row.attrName} 吗？`"
                 @confirm="deleteAttr(row.id)"
                 width="300px"
                 icon="WarningFilled"
@@ -45,26 +45,29 @@
       <div v-show="scene == 1">
         <el-form :inline="true">
           <el-form-item label="属性名称">
-            <el-input placeholder="请输入属性名称" v-model="attrParams.attrName"/>
+            <el-input placeholder="请输入属性名称" v-model="attrParams.attrName" />
           </el-form-item>
         </el-form>
-        <el-button 
-          type="primary" 
-          icon="Plus" 
-          :disabled="attrParams.attrName.trim()? false:true"
+        <el-button
+          type="primary"
+          icon="Plus"
+          :disabled="attrParams.attrName.trim() ? false : true"
           @click="addAttrVaule"
-        >添加属性值</el-button>
+        >
+          添加属性值
+        </el-button>
         <el-button @click="Cancel">取消</el-button>
         <el-table :data="attrParams.attrValueList" style="width: 100%; margin: 15px 0" border>
           <el-table-column prop="date" label="序号" type="index" width="80px" align="center" />
           <el-table-column prop="name" label="属性值名称" align="center">
-            <template v-slot="{row}">
-              <el-input v-model="row.valueName" placeholder="请输入属性值名称" />
+            <template v-slot="{ row, $index }">
+              <el-input v-if="row.flag" @blur="toLook(row, $index)" v-model="row.valueName" placeholder="请输入属性值名称" />
+              <div v-else @click="toEdit(row)">{{ row.valueName }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="address" label="操作" width="180px" align="center" />
         </el-table>
-        <el-button type="primary" :disabled="false" @click="Save">保存</el-button>
+        <el-button type="primary" :disabled="attrParams.attrValueList.length>0? false:true" @click="Save">保存</el-button>
         <el-button @click="Cancel">取消</el-button>
       </div>
     </el-card>
@@ -77,16 +80,16 @@ let categoryStore = useCategoryStore()
 
 import { watch, ref, reactive } from 'vue'
 import { reqAttr, reqADDorUPDATEAttr } from '@/api/product/attr'
-import type { AttrResponseData, Attr } from '@/api/product/attr/type'
+import type { AttrResponseData, Attr, AttrValue } from '@/api/product/attr/type'
 import { ElMessage } from 'element-plus'
 // 存储已有的属性与属性值
 let attrArr = ref<Attr[]>([])
 // 收集新增的属性的数据
 let attrParams = reactive<Attr>({
-  attrName: "", //新增属性的名字
-  attrValueList: [ //新增的属性值数组
-
-  ], 
+  attrName: '', //新增属性的名字
+  attrValueList: [
+    //新增的属性值数组
+  ],
   categoryId: '', // 三级分类的id
   categoryLevel: 3, //代表是三级分类
 })
@@ -116,12 +119,12 @@ const getAttr = async () => {
 const addAttr = () => {
   // 需要先清空数据
   Object.assign(attrParams, {
-  attrName: "", //新增属性的名字
-  attrValueList: [ //新增的属性值数组
-
-  ], 
-  categoryId: categoryStore.c3Id, // 收集三级分类的id
-  categoryLevel: 3, //代表是三级分类    
+    attrName: '', //新增属性的名字
+    attrValueList: [
+      //新增的属性值数组
+    ],
+    categoryId: categoryStore.c3Id, // 收集三级分类的id
+    categoryLevel: 3, //代表是三级分类
   })
   // 切换为添加属性页面
   scene.value = 1
@@ -138,21 +141,21 @@ const Cancel = () => {
 // 保存按钮的回调
 const Save = async () => {
   let result = await reqADDorUPDATEAttr(attrParams)
-  if(result.code == 200){
+  if (result.code == 200) {
     // 保存成功需要切换场景
     scene.value = 0
     // 提示信息
     ElMessage({
-      type:'success',
-      message:attrParams.id? '修改成功':'添加成功'
+      type: 'success',
+      message: attrParams.id ? '修改成功' : '添加成功',
     })
     // 获取全部已有数据
     getAttr()
-  }else {
+  } else {
     // 提示信息
     ElMessage({
-      type:'error',
-      message:attrParams.id? '修改失败':'添加失败'
+      type: 'error',
+      message: attrParams.id ? '修改失败' : '添加失败',
     })
   }
 }
@@ -160,8 +163,43 @@ const Save = async () => {
 const addAttrVaule = () => {
   // 点击按钮的时候，向数组添加一个属性值对象
   attrParams.attrValueList.push({
-    valueName:''
+    valueName: '',
+    flag: true
   })
+}
+// 属性值表单失去焦点事件回调
+const toLook = (row: AttrValue, $index:number) => {
+  // 非法情况1:空属性
+  if(row.valueName.trim() == ''){
+    // 删除调用对应属性值为空的元素
+    attrParams.attrValueList.splice($index,1)
+    // 错误提示信息
+    ElMessage({
+      type: 'error',
+      message: '属性值不能为空'
+    })
+    return
+  }
+  let repeat = attrParams.attrValueList.find((item) => {
+    // 把当前失去焦点的属性值对象从数组当中去除
+    if(item != row){
+      return item.valueName === row.valueName
+    }
+  })
+  if(repeat){
+    // 将重复的属性值从数组中去除
+    attrParams.attrValueList.splice($index,1)
+    ElMessage({
+      type: 'error',
+      message: '属性值不能重复'
+    })
+    return
+  }
+  row.flag = false
+}
+
+const toEdit = (row: AttrValue) => {
+  row.flag = true
 }
 </script>
 
