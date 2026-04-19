@@ -1,6 +1,6 @@
 // 属性相关的API文件
 import request from '@/utils/request'
-import type { CategoryResponseData, AttrResponseData } from './type'
+import type { CategoryResponseData, AttrResponseData, Attr } from './type'
 // 属性接口
 const API = {
   // 一级分类的接口
@@ -9,6 +9,8 @@ const API = {
   C3_URL: '/admin/product/getCategory3',
   // 获取分类下已有的属性和属性值
   ATTR_URL: '/admin/product/attrInfoList',
+  // 添加或修改已有属性的接口地址
+  ADDUPDATE_URL: '/admin/product/saveAttrInfo',
 }
 
 export const reqC1 = () => request.get<any, CategoryResponseData>(API.C1_URL)
@@ -26,3 +28,6 @@ export const reqAttr = (
   category3Id: number | string,
 ) =>
   request.get<any, AttrResponseData>(API.ATTR_URL + `/${category1Id}/${category2Id}/${category3Id}`)
+
+// 添加或修改已有属性
+export const reqADDorUPDATEAttr = (data: Attr) => request.post<any, any>(API.ADDUPDATE_URL, data)

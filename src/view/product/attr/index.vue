@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 三级分类组件 -->
-    <Category :scene="scene"/>
+    <Category :scene="scene" />
     <el-card>
       <div v-show="scene == 0">
         <el-button
@@ -43,17 +43,17 @@
       </div>
 
       <div v-show="scene == 1">
-        <el-form :inline="true"> 
-            <el-form-item label="属性名称">
-              <el-input placeholder="请输入属性名称" />
-            </el-form-item>
+        <el-form :inline="true">
+          <el-form-item label="属性名称">
+            <el-input placeholder="请输入属性名称" />
+          </el-form-item>
         </el-form>
         <el-button type="primary" icon="Plus" :disabled="true">添加属性值</el-button>
         <el-button @click="Cancel">取消</el-button>
-        <el-table :data="tableData" style="width: 100%; margin: 15px 0;" border>
-            <el-table-column prop="date" label="序号" width="80px" align="center"/>
-            <el-table-column prop="name" label="属性值" align="center"/>
-            <el-table-column prop="address" label="操作" width="180px" align="center"/>
+        <el-table :data="tableData" style="width: 100%; margin: 15px 0" border>
+          <el-table-column prop="date" label="序号" width="80px" align="center" />
+          <el-table-column prop="name" label="属性值" align="center" />
+          <el-table-column prop="address" label="操作" width="180px" align="center" />
         </el-table>
         <el-button type="primary" :disabled="true">保存</el-button>
         <el-button @click="Cancel">取消</el-button>

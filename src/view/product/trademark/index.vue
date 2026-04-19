@@ -1,7 +1,7 @@
 <template>
   <el-card class="box-card">
     <el-button type="primary" size="default" icon="Plus" @click="addTrademark">添加品牌</el-button>
-    <el-table border :data="trademarkArr" style="margin: 15px 0;">
+    <el-table border :data="trademarkArr" style="margin: 15px 0">
       <el-table-column label="序号" width="80px" align="center" type="index"></el-table-column>
       <!-- el-table-column默认展示数据使用div，prop="tmName" -->
       <el-table-column label="品牌名称" align="center">
