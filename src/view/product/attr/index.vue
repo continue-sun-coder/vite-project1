@@ -61,13 +61,29 @@
           <el-table-column prop="date" label="序号" type="index" width="80px" align="center" />
           <el-table-column prop="name" label="属性值名称" align="center">
             <template v-slot="{ row, $index }">
-              <el-input v-if="row.flag" @blur="toLook(row, $index)" v-model="row.valueName" placeholder="请输入属性值名称" />
-              <div v-else @click="toEdit(row)">{{ row.valueName }}</div>
+              <el-input
+                :ref="(vc:any)=>inputArr[$index]=vc"
+                v-if="row.flag"
+                @blur="toLook(row, $index)"
+                v-model="row.valueName"
+                placeholder="请输入属性值名称"
+              />
+              <div v-else @click="toEdit(row,$index)">{{ row.valueName }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="address" label="操作" width="180px" align="center" />
+          <el-table-column prop="address" label="操作" width="180px" align="center">
+            <template #="{ row, $index }">
+              <el-button type="danger" size="small" icon="Delete" @click="attrParams.attrValueList.splice($index,1)" />
+            </template>
+          </el-table-column>
         </el-table>
-        <el-button type="primary" :disabled="attrParams.attrValueList.length>0? false:true" @click="Save">保存</el-button>
+        <el-button
+          type="primary"
+          :disabled="attrParams.attrValueList.length > 0 ? false : true"
+          @click="Save"
+        >
+          保存
+        </el-button>
         <el-button @click="Cancel">取消</el-button>
       </div>
     </el-card>
@@ -78,7 +94,7 @@
 import { useCategoryStore } from '@/store/modules/category'
 let categoryStore = useCategoryStore()
 
-import { watch, ref, reactive } from 'vue'
+import { watch, ref, reactive, nextTick } from 'vue'
 import { reqAttr, reqADDorUPDATEAttr } from '@/api/product/attr'
 import type { AttrResponseData, Attr, AttrValue } from '@/api/product/attr/type'
 import { ElMessage } from 'element-plus'
@@ -93,6 +109,8 @@ let attrParams = reactive<Attr>({
   categoryId: '', // 三级分类的id
   categoryLevel: 3, //代表是三级分类
 })
+// 准备一个数组：存储对应组件实例el-input
+let inputArr = ref<any>([])
 // 定义卡片内容切换变量
 let scene = ref<number>(0)
 // 监听仓库三级分类ID的变化
@@ -164,42 +182,50 @@ const addAttrVaule = () => {
   // 点击按钮的时候，向数组添加一个属性值对象
   attrParams.attrValueList.push({
     valueName: '',
-    flag: true
+    flag: true,
+  })
+  // 获取最后一个el-input组件，聚焦
+  nextTick(()=>{
+    inputArr.value[attrParams.attrValueList.length-1].focus()
   })
 }
 // 属性值表单失去焦点事件回调
-const toLook = (row: AttrValue, $index:number) => {
+const toLook = (row: AttrValue, $index: number) => {
   // 非法情况1:空属性
-  if(row.valueName.trim() == ''){
+  if (row.valueName.trim() == '') {
     // 删除调用对应属性值为空的元素
-    attrParams.attrValueList.splice($index,1)
+    attrParams.attrValueList.splice($index, 1)
     // 错误提示信息
     ElMessage({
       type: 'error',
-      message: '属性值不能为空'
+      message: '属性值不能为空',
     })
     return
   }
   let repeat = attrParams.attrValueList.find((item) => {
     // 把当前失去焦点的属性值对象从数组当中去除
-    if(item != row){
+    if (item != row) {
       return item.valueName === row.valueName
     }
   })
-  if(repeat){
+  if (repeat) {
     // 将重复的属性值从数组中去除
-    attrParams.attrValueList.splice($index,1)
+    attrParams.attrValueList.splice($index, 1)
     ElMessage({
       type: 'error',
-      message: '属性值不能重复'
+      message: '属性值不能重复',
     })
     return
   }
   row.flag = false
 }
 
-const toEdit = (row: AttrValue) => {
+const toEdit = (row: AttrValue, $index:number) => {
   row.flag = true
+  // 响应式数据发生变化，获取更新的DOM
+  nextTick(()=>{
+    inputArr.value[$index].focus()
+  })
 }
 </script>
 
