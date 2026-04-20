@@ -62,18 +62,23 @@
           <el-table-column prop="name" label="属性值名称" align="center">
             <template v-slot="{ row, $index }">
               <el-input
-                :ref="(vc:any)=>inputArr[$index]=vc"
+                :ref="(vc: any) => (inputArr[$index] = vc)"
                 v-if="row.flag"
                 @blur="toLook(row, $index)"
                 v-model="row.valueName"
                 placeholder="请输入属性值名称"
               />
-              <div v-else @click="toEdit(row,$index)">{{ row.valueName }}</div>
+              <div v-else @click="toEdit(row, $index)">{{ row.valueName }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="address" label="操作" width="180px" align="center">
             <template #="{ row, $index }">
-              <el-button type="danger" size="small" icon="Delete" @click="attrParams.attrValueList.splice($index,1)" />
+              <el-button
+                type="danger"
+                size="small"
+                icon="Delete"
+                @click="attrParams.attrValueList.splice($index, 1)"
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -148,9 +153,12 @@ const addAttr = () => {
   scene.value = 1
 }
 
-const updateAttr = () => {
+const updateAttr = (row: Attr) => {
   // 切换为添加属性页面
   scene.value = 1
+  // 将已有的属性对象赋值给attrParams
+  // 要进行深拷贝，不然在修改页面会出现添加属性值后即使取消添加也会使原来的对象受影响
+  Object.assign(attrParams, JSON.parse(JSON.stringify(row)))
 }
 // 取消按钮的回调
 const Cancel = () => {
@@ -185,8 +193,8 @@ const addAttrVaule = () => {
     flag: true,
   })
   // 获取最后一个el-input组件，聚焦
-  nextTick(()=>{
-    inputArr.value[attrParams.attrValueList.length-1].focus()
+  nextTick(() => {
+    inputArr.value[attrParams.attrValueList.length - 1].focus()
   })
 }
 // 属性值表单失去焦点事件回调
@@ -220,10 +228,10 @@ const toLook = (row: AttrValue, $index: number) => {
   row.flag = false
 }
 
-const toEdit = (row: AttrValue, $index:number) => {
+const toEdit = (row: AttrValue, $index: number) => {
   row.flag = true
   // 响应式数据发生变化，获取更新的DOM
-  nextTick(()=>{
+  nextTick(() => {
     inputArr.value[$index].focus()
   })
 }
