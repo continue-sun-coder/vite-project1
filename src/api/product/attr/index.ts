@@ -11,6 +11,8 @@ const API = {
   ATTR_URL: '/admin/product/attrInfoList',
   // 添加或修改已有属性的接口地址
   ADDUPDATE_URL: '/admin/product/saveAttrInfo',
+  // 删除某一个属性
+  DELETEATTR_URL: '/admin/product/deleteAttr/',
 }
 
 export const reqC1 = () => request.get<any, CategoryResponseData>(API.C1_URL)
@@ -31,3 +33,7 @@ export const reqAttr = (
 
 // 添加或修改已有属性
 export const reqADDorUPDATEAttr = (data: Attr) => request.post<any, any>(API.ADDUPDATE_URL, data)
+
+// 删除某一已有属性
+export const reqRemoveAttr = (attrId: number) =>
+  request.delete<any, any>(API.DELETEATTR_URL + attrId)

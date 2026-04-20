@@ -17,7 +17,7 @@
           <el-table-column prop="date" type="index" label="序号" width="80px" align="center" />
           <el-table-column prop="attrName" label="属性名称" width="120px" align="center" />
           <el-table-column prop="address" label="属性值名称" align="center">
-            <template #="{ row, $index }">
+            <template v-slot="{ row }">
               <el-tag style="margin: 5px" v-for="item in row.attrValueList" :key="item.id">
                 {{ item.valueName }}
               </el-tag>
@@ -25,7 +25,7 @@
           </el-table-column>
           <el-table-column prop="address" label="操作" width="180px" align="center">
             <!-- 已有的属性对象 -->
-            <template #="{ row, $index }">
+            <template v-slot="{ row }">
               <el-button type="warning" size="small" icon="Edit" @click="updateAttr(row)" />
               <el-popconfirm
                 :title="`您确定要删除 ${row.attrName} 吗？`"
@@ -72,7 +72,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="address" label="操作" width="180px" align="center">
-            <template #="{ row, $index }">
+            <template v-slot="{ $index }">
               <el-button
                 type="danger"
                 size="small"
@@ -99,8 +99,8 @@
 import { useCategoryStore } from '@/store/modules/category'
 let categoryStore = useCategoryStore()
 
-import { watch, ref, reactive, nextTick } from 'vue'
-import { reqAttr, reqADDorUPDATEAttr } from '@/api/product/attr'
+import { watch, ref, reactive, nextTick, onBeforeUnmount } from 'vue'
+import { reqAttr, reqADDorUPDATEAttr, reqRemoveAttr } from '@/api/product/attr'
 import type { AttrResponseData, Attr, AttrValue } from '@/api/product/attr/type'
 import { ElMessage } from 'element-plus'
 // 存储已有的属性与属性值
@@ -152,7 +152,7 @@ const addAttr = () => {
   // 切换为添加属性页面
   scene.value = 1
 }
-
+// 修改按钮
 const updateAttr = (row: Attr) => {
   // 切换为添加属性页面
   scene.value = 1
@@ -198,6 +198,7 @@ const addAttrVaule = () => {
   })
 }
 // 属性值表单失去焦点事件回调
+// input失去焦点变为div展示
 const toLook = (row: AttrValue, $index: number) => {
   // 非法情况1:空属性
   if (row.valueName.trim() == '') {
@@ -227,7 +228,7 @@ const toLook = (row: AttrValue, $index: number) => {
   }
   row.flag = false
 }
-
+// 在添加属性值界面，点击进入编辑模式
 const toEdit = (row: AttrValue, $index: number) => {
   row.flag = true
   // 响应式数据发生变化，获取更新的DOM
@@ -235,6 +236,31 @@ const toEdit = (row: AttrValue, $index: number) => {
     inputArr.value[$index].focus()
   })
 }
+
+// 删除某一已有属性的方法
+const deleteAttr = async (id: number) => {
+  // 发送删除请求
+  let result = await reqRemoveAttr(id)
+  if(result.code == 200){
+    // 删除成功
+    ElMessage({
+      type: 'success',
+      message: '删除成功'
+    })
+    // 获取剩余已有属性的属性值
+    getAttr()
+  }else {
+    ElMessage({
+      type: 'error',
+      message: '删除失败'
+    })
+  }
+}
+
+// 路由组件销毁的时候，把仓库分类相关的数据清空，不然路由跳转后重新访问Category组件会有残留数组
+onBeforeUnmount(()=>{
+  categoryStore.$reset()
+})
 </script>
 
 <style scoped lang="scss"></style>
