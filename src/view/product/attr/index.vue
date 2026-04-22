@@ -241,24 +241,24 @@ const toEdit = (row: AttrValue, $index: number) => {
 const deleteAttr = async (id: number) => {
   // 发送删除请求
   let result = await reqRemoveAttr(id)
-  if(result.code == 200){
+  if (result.code == 200) {
     // 删除成功
     ElMessage({
       type: 'success',
-      message: '删除成功'
+      message: '删除成功',
     })
     // 获取剩余已有属性的属性值
     getAttr()
-  }else {
+  } else {
     ElMessage({
       type: 'error',
-      message: '删除失败'
+      message: '删除失败',
     })
   }
 }
 
 // 路由组件销毁的时候，把仓库分类相关的数据清空，不然路由跳转后重新访问Category组件会有残留数组
-onBeforeUnmount(()=>{
+onBeforeUnmount(() => {
   categoryStore.$reset()
 })
 </script>
