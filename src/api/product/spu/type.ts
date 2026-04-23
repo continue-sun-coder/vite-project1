@@ -59,7 +59,7 @@ export interface SpuImg {
 }
 
 export interface SpuImgs extends ResponseData {
-  data: SpuImgs[]
+  data: SpuImg[]
 }
 
 // 销售属性值对象

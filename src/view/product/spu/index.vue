@@ -35,7 +35,7 @@
                 size="small"
                 icon="Edit"
                 title="修改SPU"
-                @click="updateSPU"
+                @click="updateSPU(row)"
               />
               <el-button type="info" size="small" icon="InfoFilled" title="查看SKU列表" />
               <el-button type="danger" size="small" icon="Delete" title="删除SPU" />
@@ -55,7 +55,7 @@
         />
       </div>
       <!-- 添加SPU/SKU子组件 -->
-      <SpuForm v-show="scene == 1" @changeScene="changeScene" />
+      <SpuForm ref="spu" v-show="scene == 1" @changeScene="changeScene" />
       <SkuForm v-show="scene == 2" />
     </el-card>
   </div>
@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { reqGetSPU } from '@/api/product/spu'
-import type { SpuResponseData, Records } from '@/api/product/spu/type'
+import type { SpuResponseData, Records, SPU } from '@/api/product/spu/type'
 import { useCategoryStore } from '@/store/modules/category'
 let categoryStore = useCategoryStore()
 import { ref, watch } from 'vue'
@@ -80,6 +80,8 @@ let limit = ref<number>(3)
 let total = ref<number>(0)
 // 存储已有的SPU数据
 let records = ref<Records>([])
+// 获取子组件实例
+let spu = ref()
 
 // 监听三级分类ID的变化，有变化时就可以发送请求获取数据进行展示
 watch(
@@ -114,9 +116,10 @@ const addSPU = () => {
 }
 
 // 场景0中点击修改SPU按钮的回调函数
-const updateSPU = () => {
+const updateSPU = (row: SPU) => {
   // 切换场景为1
   scene.value = 1
+  spu.value.initHasSpuData(row)
 }
 
 // 子组件spuForm绑定的自定义事件，用于取消按钮的切换场景功能
