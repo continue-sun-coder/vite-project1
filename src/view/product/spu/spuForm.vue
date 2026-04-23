@@ -12,7 +12,7 @@
     <el-form-item label="描述" prop="desc">
       <el-input v-model="form.desc" type="textarea" />
     </el-form-item>
-    
+
     <el-form-item label="照片" prop="images">
       <el-upload
         v-model:file-list="fileList"
@@ -30,14 +30,14 @@
     </el-form-item>
 
     <el-form-item label="销售属性" prop="saleAttr">
-      <div style="display: flex; gap: 15px;">
+      <div style="display: flex; gap: 15px">
         <el-select v-model="form.saleAttr" placeholder="请选择属性">
           <el-option label="Options1" value="1" />
           <el-option label="Options2" value="2" />
         </el-select>
         <el-button type="primary" icon="Plus">添加销售属性</el-button>
       </div>
-      <el-table :data="tableData" style="width: 100%; margin: 10px 0;" border>
+      <el-table :data="tableData" style="width: 100%; margin: 10px 0" border>
         <el-table-column type="index" label="序号" width="80px" align="center" />
         <el-table-column prop="attrName" label="属性名" width="180px" align="center" />
         <el-table-column prop="attrValue" label="属性值" align="center" />
@@ -72,7 +72,7 @@ const form = reactive({
   brand: '',
   desc: '',
   saleAttr: '',
-  images: []
+  images: [],
 })
 
 // 文件列表（示例数据）
@@ -99,7 +99,7 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
 // 表格数据
 const tableData = ref([
   { attrName: '颜色', attrValue: '黑色,白色,红色' },
-  { attrName: '尺寸', attrValue: 'S,M,L,XL' }
+  { attrName: '尺寸', attrValue: 'S,M,L,XL' },
 ])
 </script>
 

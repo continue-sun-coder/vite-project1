@@ -5,17 +5,22 @@
 
     <el-card style="margin-top: 15px">
       <div v-show="scene == 0">
-        <el-button 
+        <el-button
           @click="addSPU"
-          type="primary" 
-          icon="Plus" 
+          type="primary"
+          icon="Plus"
           :disabled="categoryStore.c3Id ? false : true"
         >
           添加SPU
         </el-button>
         <el-table :data="records" style="width: 100%; margin: 15px 0" border>
           <el-table-column label="序号" width="80px" type="index" align="center"></el-table-column>
-          <el-table-column prop="spuName" label="名称" width="180px" align="center"></el-table-column>
+          <el-table-column
+            prop="spuName"
+            label="名称"
+            width="180px"
+            align="center"
+          ></el-table-column>
           <el-table-column
             prop="description"
             label="描述"
@@ -25,7 +30,13 @@
           <el-table-column label="操作" align="center">
             <template #="{ row, $index }">
               <el-button type="primary" size="small" icon="Plus" title="添加SKU" />
-              <el-button type="warning" size="small" icon="Edit" title="修改SPU" @click="updateSPU" />
+              <el-button
+                type="warning"
+                size="small"
+                icon="Edit"
+                title="修改SPU"
+                @click="updateSPU"
+              />
               <el-button type="info" size="small" icon="InfoFilled" title="查看SKU列表" />
               <el-button type="danger" size="small" icon="Delete" title="删除SPU" />
             </template>
@@ -44,8 +55,8 @@
         />
       </div>
       <!-- 添加SPU/SKU子组件 -->
-      <SpuForm v-show="scene == 1" @changeScene="changeScene"/>
-      <SkuForm v-show="scene == 2"/>
+      <SpuForm v-show="scene == 1" @changeScene="changeScene" />
+      <SkuForm v-show="scene == 2" />
     </el-card>
   </div>
 </template>
@@ -112,7 +123,6 @@ const updateSPU = () => {
 const changeScene = (newScene: number) => {
   scene.value = newScene
 }
-
 </script>
 
 <style scoped></style>
