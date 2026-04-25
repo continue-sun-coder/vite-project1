@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 import type {
+  SPU,
   SpuResponseData,
   AllTradeMark,
   SpuImgs,
@@ -18,6 +19,10 @@ const API = {
   SPUSALEATTR_URL: '/admin/product/spuSaleAttrList/',
   // 获取全部的销售属性
   ALLSALEATTR_URL: '/admin/product/baseSaleAttrList',
+  // 追加一个新的SPU
+  ADDSPU_URL: '/admin/product/saveSpuInfo',
+  // 更新已有的SPU
+  UPDATESPU_URL: '/admin/product/updateSpuInfo',
 }
 // 获取某个三级分类下已有的SPU的数据
 export const reqGetSPU = (page: number, limit: number, c3Id: number | string) =>
@@ -35,3 +40,16 @@ export const reqSpuSaleAttr = (id: number) =>
 
 // 获取全部的销售属性
 export const reqAllSaleAttr = () => request.get<any, AllSaleAttrResponseDate>(API.ALLSALEATTR_URL)
+
+// 添加一个新的SPU
+// 更新已有的SPU
+// data:新增/已有的SPU对象
+export const reqAddorUpdateSpu = (data: SPU) => {
+  // 如果有SPU对象有ID，则是更新，没有则是新增
+  if (data.id) {
+    // 因为返回值为null，所以直接为any
+    return request.post<any, any>(API.UPDATESPU_URL)
+  } else {
+    return request.post<any, any>(API.ADDSPU_URL)
+  }
+}

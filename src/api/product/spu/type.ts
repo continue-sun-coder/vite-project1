@@ -4,12 +4,6 @@ export interface ResponseData {
   ok: boolean
 }
 
-// export interface spuSaleAttrList{
-
-// }
-
-// export interface spuImageList {}
-
 // SPU数据的ts类型
 export interface SPU {
   id?: number
@@ -17,11 +11,11 @@ export interface SPU {
   description: string
   category3Id: number | string
   // SPU品牌的id
-  tmId: number
+  tmId: number | string
   // SPU的销售属性
-  spuSaleAttrList: null
+  spuSaleAttrList: null | SaleAttr[]
   // SPU的照片墙
-  spuImageList: null
+  spuImageList: null | SpuImg[]
 }
 
 export type Records = SPU[]
@@ -50,10 +44,10 @@ export interface AllTradeMark extends ResponseData {
 
 // 商品图片的tsleix
 export interface SpuImg {
-  id: number
-  createTime: string
-  updateTime: string
-  spuId: number
+  id?: number
+  createTime?: string
+  updateTime?: string
+  spuId?: number
   imgName: string
   imgUrl: string
 }
@@ -65,22 +59,22 @@ export interface SpuImgs extends ResponseData {
 // 销售属性值对象
 export interface SaleAttrValue {
   id?: number
-  createTime: null
-  updateTime: null
-  spuId: number
+  createTime?: null
+  updateTime?: null
+  spuId?: number
   baseSaleSttrId: number
   saleAttrValueName: string
-  saleAttrName: string
-  isChecked: null
+  saleAttrName?: string
+  isChecked?: null
 }
 // 存储已有的销售属性值数组类型
 export type spuSaleAttrValueList = SaleAttrValue[]
 // 销售属性对象
 export interface SaleAttr {
   id?: number
-  createTime: null
-  updateTime: null
-  spuId: number
+  createTime?: null
+  updateTime?: null
+  spuId?: number
   baseSaleSttrId: number
   saleAttrName: string
   spuSaleAttrValueList: spuSaleAttrValueList
