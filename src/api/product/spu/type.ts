@@ -77,7 +77,7 @@ export interface SaleAttr {
   createTime?: null
   updateTime?: null
   spuId?: number
-  baseSaleSttrId: number
+  baseSaleAttrId: number | string
   saleAttrName: string
   spuSaleAttrValueList: spuSaleAttrValueList
 }
