@@ -1,25 +1,31 @@
 <template>
   <el-form ref="formRef" :model="form" label-width="auto">
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="form.name" placeholder="请输入SPU名称" />
+    <el-form-item label="名称">
+      <el-input placeholder="请输入SPU名称" v-model="SpuParams.spuName"/>
     </el-form-item>
-    <el-form-item label="品牌" prop="brand">
-      <el-select v-model="form.brand" placeholder="请选择品牌">
-        <el-option label="Options1" value="1" />
-        <el-option label="Options2" value="2" />
+    <el-form-item label="品牌">
+      <el-select v-model="SpuParams.tmId" placeholder="请选择品牌">
+        <el-option :label="item.tmName" value="item.id" v-for="item in AllTrademark" :key="item.id"/>
       </el-select>
     </el-form-item>
-    <el-form-item label="描述" prop="desc">
+    <el-form-item label="描述" v-model="SpuParams.description">
       <el-input v-model="form.desc" type="textarea" />
     </el-form-item>
 
-    <el-form-item label="照片" prop="images">
+    <el-form-item label="照片">
+      <!-- 
+      v-model:file-list->展示默认图片 
+      action:上传图片的接口地址
+      list-type:文件列表的类型
+      on-preview:照片墙点击预览触发的钩子函数
+      -->
       <el-upload
-        v-model:file-list="fileList"
-        action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+        v-model:file-list="imgList"
+        action="/api/admin/product/fileUpload"
         list-type="picture-card"
         :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
+        :before-upload="handleUpload"
       >
         <el-icon><Plus /></el-icon>
       </el-upload>
@@ -29,7 +35,7 @@
       </el-dialog>
     </el-form-item>
 
-    <el-form-item label="销售属性" prop="saleAttr">
+    <el-form-item label="销售属性">
       <div style="display: flex; gap: 15px">
         <el-select v-model="form.saleAttr" placeholder="请选择属性">
           <el-option label="Options1" value="1" />
@@ -37,13 +43,21 @@
         </el-select>
         <el-button type="primary" icon="Plus">添加销售属性</el-button>
       </div>
-      <el-table :data="tableData" style="width: 100%; margin: 10px 0" border>
+      <el-table :data="saleAttr" style="width: 100%; margin: 10px 0" border>
         <el-table-column type="index" label="序号" width="80px" align="center" />
-        <el-table-column prop="attrName" label="属性名" width="180px" align="center" />
-        <el-table-column prop="attrValue" label="属性值" align="center" />
+        <el-table-column prop="saleAttrName" label="属性名" width="180px" align="center" />
+        <el-table-column prop="attrValue" label="属性值" align="center" >
+          <!-- row:当前SPU已有的销售属性对象 -->
+          <template #="{row,$index}">
+            <el-tag v-for="item in row.spuSaleAttrValueList" :key="item.id" closable style="margin: 0 5px;">
+              {{ item.saleAttrValueName }}
+            </el-tag>
+            <el-button type="success" size="small" icon="Plus"></el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="80px" align="center">
-          <template #default>
-            <el-button type="danger" size="small" icon="Delete" link />
+          <template #="{row,$index}">
+            <el-button type="danger" size="small" icon="Delete" @click="saleAttr.splice($index,1)"/>
           </template>
         </el-table-column>
       </el-table>
@@ -70,7 +84,17 @@ import type {
   AllSaleAttr,
   AllSaleAttrResponseDate,
 } from '@/api/product/spu/type'
+import { ElMessage } from 'element-plus'
 
+// 存储已有的SPU对象
+let SpuParams = ref<SPU>({
+  category3Id: "", //三级分类的id
+  spuName: "", //SPU的名字
+  description: "", //描述
+  tmId: "", //品牌id
+  spuImageList: [], //照片
+  spuSaleAttrList: [] //属性值
+})
 // 存储已有的SPU数据
 let AllTrademark = ref<TradeMark[]>([])
 // 商品的图片
@@ -80,6 +104,8 @@ let saleAttr = ref<SaleAttr[]>([])
 // 全部的销售属性
 let allSaleAttr = ref<AllSaleAttr[]>([])
 const initHasSpuData = async (row: SPU) => {
+  // 存储已有的SPU对象，用于在模版中展示
+  SpuParams.value = row
   // row为父组件传过来的已有的SPU对象（不完整）
   // 获取全部品牌的数据
   let result: AllTradeMark = await reqAllTrademark()
@@ -91,7 +117,13 @@ const initHasSpuData = async (row: SPU) => {
   let result3: AllSaleAttrResponseDate = await reqAllSaleAttr()
 
   AllTrademark.value = result.data
-  imgList.value = result1.data
+  imgList.value = result1.data.map(item=>{
+    return{
+      // elementplus的API格式为name,url，因此需要进行修改
+      name:item.imgName,
+      url:item.imgUrl
+    }
+  })
   saleAttr.value = result2.data
   allSaleAttr.value = result3.data
 }
@@ -105,7 +137,6 @@ const cancel = () => {
 }
 
 import { Plus } from '@element-plus/icons-vue'
-import type { UploadProps, UploadUserFile } from 'element-plus'
 
 // 表单数据
 const form = reactive({
@@ -116,25 +147,45 @@ const form = reactive({
   images: [],
 })
 
-// 文件列表（示例数据）
-const fileList = ref<UploadUserFile[]>([
-  {
-    name: 'food.jpeg',
-    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-  },
-])
-
-// 图片预览
+// 图片预览的地址
 const dialogImageUrl = ref('')
+// 控制图片预览对话框的显示与隐藏
 const dialogVisible = ref(false)
-
-const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
-  console.log('删除文件:', uploadFile, uploadFiles)
+// 照片墙删除图片执行的钩子
+const handleRemove = () => {
+  ElMessage({
+    type: 'success',
+    message: '图片已删除',
+  })
 }
-
-const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
+// 照片墙点击预览触发的钩子函数
+const handlePictureCardPreview = (uploadFile: any) => {
   dialogImageUrl.value = uploadFile.url!
   dialogVisible.value = true
+}
+// 照片上传成功之前的钩子，约束文件的大小与类型
+const handleUpload = (uploadFile: any) => {
+  if (
+    uploadFile.type === 'image/png' ||
+    uploadFile.type === 'image/jpeg' ||
+    uploadFile.type === 'image/gif'
+  ) {
+    if (uploadFile.size / 1024 / 1024 < 3) {
+      return true
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '上传文件务必小于3M',
+      })
+      return false
+    }
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '上传文件务必PNG|JPG|GIF',
+    })
+    return false
+  }
 }
 
 // 表格数据
