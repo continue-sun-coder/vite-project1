@@ -42,7 +42,7 @@
               <el-button
                 type="info"
                 size="small"
-                icon="View"
+                icon="infoFilled"
                 title="查看SKU列表"
                 @click="getSku(row)"
               ></el-button>
