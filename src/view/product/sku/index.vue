@@ -49,36 +49,69 @@
       @current-change="getHasSku"
     />
     <!-- 抽屉组件 -->
-     <el-drawer 
-        v-model="drawer" 
-        title="I am the title" 
-        direction="rtl" 
-        :before-close="handleClose">
-        <template #header>
-          商品详情
-        </template>
-        <template #default>
-          <el-row>
-              <el-col :span="6">名称</el-col>
-              <el-col :span="18">华为mate80</el-col>
-          </el-row>
-          <el-row>
-            <el-col>
-              <el-carousel :interval="4000" type="card" height="200px">
-                <el-carousel-item v-for="item in 6" :key="item">
-                  <h3 text="2xl" justify="center">{{ item }}</h3>
-                </el-carousel-item>
-              </el-carousel>
-            </el-col>
-          </el-row>
-        </template>
-     </el-drawer>
+    <el-drawer 
+      v-model="drawer" 
+      title="I am the title" 
+      direction="rtl" 
+      :before-close="handleClose">
+      <template #header>
+        <h4>商品详情</h4>
+      </template>
+      <template #default>
+        <el-row style="margin: 10px 0px">
+          <el-col :span="6">名称</el-col>
+          <el-col :span="18">{{ skuInfo?.skuName }}</el-col>
+        </el-row>
+        <el-row style="margin: 10px 0px">
+          <el-col :span="6">描述</el-col>
+          <el-col :span="18">{{ skuInfo?.skuDesc }}</el-col>
+        </el-row>
+        <el-row style="margin: 10px 0px">
+          <el-col :span="6">价格</el-col>
+          <el-col :span="18">{{ skuInfo?.price }}</el-col>
+        </el-row>
+        <el-row style="margin: 10px 0px">
+          <el-col :span="6">平台属性</el-col>
+          <el-col :span="18">
+            <el-tag
+              v-for="item in skuInfo?.skuAttrValueList"
+              :key="item.id"
+              style="margin: 5px 5px"
+            >
+              {{ item.valueName }}
+            </el-tag>
+          </el-col>
+        </el-row>
+        <el-row style="margin: 10px 0px">
+          <el-col :span="6">销售属性</el-col>
+          <el-col :span="18">
+            <el-tag
+              v-for="item in skuInfo?.skuSaleAttrValueList"
+              :key="item.id"
+              style="margin: 5px 5px"
+            >
+              {{ item.saleAttrValueName }}
+            </el-tag>
+          </el-col>
+        </el-row>
+        <el-row style="margin: 10px 0px">
+          <el-col :span="6">商品图片</el-col>
+          <el-col :span="18">
+            <el-carousel :interval="4000" type="card" height="200px">
+              <el-carousel-item v-for="item in skuInfo?.skuImageList" :key="item">
+                <img :src="item.imgUrl" alt="" style="width: 100%; height: 100%" />
+              </el-carousel-item>
+            </el-carousel>
+          </el-col>
+        </el-row>
+      </template>
+    </el-drawer>
   </el-card>
 </template>
 
 <script setup lang="ts">
-import { reqCancelSale, reqSkuList } from '@/api/product/sku'
-import type { SkuResponseData, SkuData } from '@/api/product/sku/type'
+import { reqCancelSale, reqSkuInfo, reqSkuList } from '@/api/product/sku'
+import type { SkuResponseData, SkuData, SkuInfoData } from '@/api/product/sku/type'
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
 // 当前页码
@@ -91,6 +124,7 @@ let total = ref<number>(0)
 let skuArr = ref<SkuData[]>()
 // 控制抽屉组件的显示与隐藏
 let drawer = ref<boolean>(false)
+let skuInfo = ref<SkuData>()
 onMounted(() => {
   getHasSku()
 })
@@ -136,8 +170,14 @@ const updateSku = () => {
   })
 }
 // 抽屉显示数据
-const findSku = (row: any) => {
+const findSku = async (row: SkuData) => {
+  // 展示抽屉
   drawer.value = true
+  // 获取数据
+  let result: SkuInfoData = await reqSkuInfo(row.id)
+  if(result.code == 200){
+    skuInfo.value = result.data
+  }
 }
 const deleteSku = (row: any) => {}
 </script>
@@ -157,5 +197,27 @@ const deleteSku = (row: any) => {}
 
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
+}
+
+/* 调整指示条位置到图片底部外面 */
+:deep(.el-carousel__indicators) {
+  bottom: -50px;
+  top: auto !important;
+}
+
+/* 调整指示条颜色 - 使用更深的背景色 */
+:deep(.el-carousel__indicator.is-active button) {
+  background-color: #333333 !important;
+  opacity: 1;
+}
+
+:deep(.el-carousel__indicator button) {
+  background-color: #999999 !important;
+  opacity: 0.7;
+}
+
+/* 移除carousel-item的默认背景，让图片正常显示 */
+:deep(.el-carousel__item) {
+  background-color: transparent !important;
 }
 </style>

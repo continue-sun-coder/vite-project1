@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import type { SkuResponseData } from './type'
+import type { SkuInfoData, SkuResponseData } from './type'
 
 const API = {
   // 获取已有的商品数据
@@ -8,6 +8,10 @@ const API = {
   SALE_URL: '/admin/product/onSale/',
   // 商品下架
   CANCELSALE_URL: '/admin/product/cancelSale/',
+  // 获取商品详情
+  SKUINFO_URL: '/admin/product/getSkuInfo/',
+  // 删除已有的商品
+  DELETESKU_URL: '/admin/product/deleteSku/',
 }
 
 // 获取商品SKU的接口
@@ -19,3 +23,6 @@ export const reqSaleSku = (skuId: number) => request.get<any, any>(API.SALE_URL 
 
 // 下架商品
 export const reqCancelSale = (skuId: number) => request.get<any, any>(API.CANCELSALE_URL + skuId)
+
+// 获取商品详情的接口（抽屉组件）
+export const reqSkuInfo = (skuId: number) => request.get<any, SkuInfoData>(API.SKUINFO_URL + skuId)
