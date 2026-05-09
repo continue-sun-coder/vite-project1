@@ -19,18 +19,13 @@
       <el-table-column label="操作" width="250px" fixed="right">
         <template v-slot="{ row }">
           <el-button
-            type="warning"
+            :type="row.isSale ? 'warning' : 'success'"
             size="small"
             :icon="row.isSale == 1 ? 'Bottom' : 'Top'"
             @click="updateSale(row)"
           ></el-button>
           <el-button type="primary" size="small" icon="Edit" @click="updateSku"></el-button>
-          <el-button
-            type="info"
-            size="small"
-            icon="InfoFilled"
-            @click="findSku(row)"
-          ></el-button>
+          <el-button type="info" size="small" icon="InfoFilled" @click="findSku(row)"></el-button>
           <el-popconfirm
             :title="`确定删除 ${row.skuName} ?`"
             width="200px"
@@ -57,8 +52,9 @@
 </template>
 
 <script setup lang="ts">
-import { reqSkuList } from '@/api/product/sku'
+import { reqCancelSale, reqSkuList } from '@/api/product/sku'
 import type { SkuResponseData, SkuData } from '@/api/product/sku/type'
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
 // 当前页码
 let pageNo = ref<number>(1)
@@ -68,29 +64,52 @@ let pageSize = ref<number>(10)
 let total = ref<number>(0)
 // 需展示的已有sku数据
 let skuArr = ref<SkuData[]>()
-onMounted(()=>{
+onMounted(() => {
   getHasSku()
 })
 // 获取已有的sku数据
-const getHasSku = async (pager=1) => {
+const getHasSku = async (pager = 1) => {
   pageNo.value = pager
-  const result:SkuResponseData = await reqSkuList(pageNo.value, pageSize.value)
-  if(result.code == 200){
+  const result: SkuResponseData = await reqSkuList(pageNo.value, pageSize.value)
+  if (result.code == 200) {
     total.value = result.data.total
     skuArr.value = result.data.records
   }
 }
 // 分页器下拉菜单（选择展示条数）的回调函数
-const handleSizeChange = (pageSize: number)=> {
+const handleSizeChange = (pageSize: number) => {
   getHasSku()
-} 
-const findSku = (row:any)=> {
-
 }
-const deleteSku = (row:any)=> {
 
+// 商品上下架
+const updateSale = async (row: SkuData) => {
+  // 如果商品的isSale=1,说明商品上架状态
+  if(row.isSale == 1){
+    await reqCancelSale(row.id)
+    ElMessage({
+      type: 'success',
+      message:'下架成功'
+    })
+    // 发请求获取更新后的列表
+    getHasSku(pageNo.value)
+  }else {
+    await reqCancelSale(row.id)
+    ElMessage({
+      type: 'success',
+      message:'上架成功'
+    })
+    // 发请求获取更新后的列表
+    getHasSku(pageNo.value)
+  }
 }
-const updateSku = (row:any)=> {
+const updateSku = () => {
+  ElMessage({
+    type:'success',
+    message:'正在开发中...'
+  })
+}
+const findSku = (row: any) => {}
+const deleteSku = (row: any) => {
 
 }
 </script>
