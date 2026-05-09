@@ -78,10 +78,10 @@
       <!-- dialog对话框：展示已有的SKU数据 -->
       <el-dialog v-model="show" title="SKU列表">
         <el-table :data="skuArr" border>
-          <el-table-column label="SKU 名字" prop="skuName"></el-table-column>
-          <el-table-column label="SKU 价格" prop="price"></el-table-column>
-          <el-table-column label="SKU 重量" prop="weight"></el-table-column>
-          <el-table-column label="SKU 图片">
+          <el-table-column label="名字" prop="skuName"></el-table-column>
+          <el-table-column label="价格" prop="price"></el-table-column>
+          <el-table-column label="重量" prop="weight"></el-table-column>
+          <el-table-column label="图片">
             <template v-slot="{ row }">
               <img :src="row.skuDefaultImg" style="width: 100px; height: 100px" />
             </template>

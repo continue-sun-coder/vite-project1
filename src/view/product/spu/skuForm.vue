@@ -1,16 +1,16 @@
 <template>
   <el-form label-width="auto">
     <el-form-item label="sku名称">
-      <el-input placeholder="请输入名称" v-model="skuParams.skuName"/>
+      <el-input placeholder="请输入名称" v-model="skuParams.skuName" />
     </el-form-item>
-    <el-form-item label="价格(元)" >
-      <el-input-number :min="0" :precision="2" :step="0.01" v-model="skuParams.price"/>
+    <el-form-item label="价格(元)">
+      <el-input-number :min="0" :precision="2" :step="0.01" v-model="skuParams.price" />
     </el-form-item>
-    <el-form-item label="重量(克)" >
-      <el-input-number :min="0" :precision="0" :step="1" v-model="skuParams.weight"/>
+    <el-form-item label="重量(克)">
+      <el-input-number :min="0" :precision="0" :step="1" v-model="skuParams.weight" />
     </el-form-item>
-    <el-form-item label="sku描述" >
-      <el-input type="textarea" placeholder="请输入描述" v-model="skuParams.skuDesc"/>
+    <el-form-item label="sku描述">
+      <el-input type="textarea" placeholder="请输入描述" v-model="skuParams.skuDesc" />
     </el-form-item>
     <el-form-item label="平台属性">
       <el-form label-width="auto" :inline="true">
@@ -73,7 +73,7 @@ let attrArr = ref<any>([])
 let saleArr = ref<any>([])
 // 照片墙数组
 let imgArr = ref<any>([])
-//获取图片部分的 table组件实例 
+//获取图片部分的 table组件实例
 let table = ref()
 // 收集sku数据的参数
 let skuParams = reactive<SkuData>({
@@ -99,12 +99,12 @@ const cancel = () => {
 }
 
 // 收集默认图片的数据
-const handler = (row:any) => {
+const handler = (row: any) => {
   // 复选框选中，且每次只能勾选一个
-  imgArr.value.forEach((item:any) => {
-    table.value.toggleRowSelection(item,false)
+  imgArr.value.forEach((item: any) => {
+    table.value.toggleRowSelection(item, false)
   })
-  table.value.toggleRowSelection(row,true)
+  table.value.toggleRowSelection(row, true)
   // 收集图片地址
   skuParams.skuDefaultImg = row.imgUrl
 }
