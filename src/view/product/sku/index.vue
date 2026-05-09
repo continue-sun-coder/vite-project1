@@ -93,11 +93,7 @@
         <el-row style="margin: 10px 0px">
           <el-col :span="6">商品图片</el-col>
           <el-col :span="18">
-            <el-carousel 
-              :interval="4000" 
-              type="card" 
-              height="200px"
-              indicator-position="outside">
+            <el-carousel :interval="4000" type="card" height="200px" indicator-position="outside">
               <el-carousel-item v-for="item in skuInfo?.skuImageList" :key="item.id">
                 <img :src="item.imgUrl" alt="" style="width: 100%; height: 100%" />
               </el-carousel-item>
@@ -181,16 +177,16 @@ const findSku = async (row: SkuData) => {
 }
 const deleteSku = async (id: number) => {
   let result = await reqRemoveSku(id)
-  if(result.code == 200){
+  if (result.code == 200) {
     ElMessage({
-      type:'success',
-      message:'删除成功'
+      type: 'success',
+      message: '删除成功',
     })
-    getHasSku(skuArr.value.length > 0 ? pageNo.value : pageNo.value-1)
-  }else{
+    getHasSku(skuArr.value.length > 0 ? pageNo.value : pageNo.value - 1)
+  } else {
     ElMessage({
-      type:'error',
-      message:'删除失败'
+      type: 'error',
+      message: '删除失败',
     })
   }
 }
