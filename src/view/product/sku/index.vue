@@ -48,6 +48,31 @@
       @size-change="handleSizeChange"
       @current-change="getHasSku"
     />
+    <!-- 抽屉组件 -->
+     <el-drawer 
+        v-model="drawer" 
+        title="I am the title" 
+        direction="rtl" 
+        :before-close="handleClose">
+        <template #header>
+          商品详情
+        </template>
+        <template #default>
+          <el-row>
+              <el-col :span="6">名称</el-col>
+              <el-col :span="18">华为mate80</el-col>
+          </el-row>
+          <el-row>
+            <el-col>
+              <el-carousel :interval="4000" type="card" height="200px">
+                <el-carousel-item v-for="item in 6" :key="item">
+                  <h3 text="2xl" justify="center">{{ item }}</h3>
+                </el-carousel-item>
+              </el-carousel>
+            </el-col>
+          </el-row>
+        </template>
+     </el-drawer>
   </el-card>
 </template>
 
@@ -64,6 +89,8 @@ let pageSize = ref<number>(10)
 let total = ref<number>(0)
 // 需展示的已有sku数据
 let skuArr = ref<SkuData[]>()
+// 控制抽屉组件的显示与隐藏
+let drawer = ref<boolean>(false)
 onMounted(() => {
   getHasSku()
 })
@@ -84,19 +111,19 @@ const handleSizeChange = (pageSize: number) => {
 // 商品上下架
 const updateSale = async (row: SkuData) => {
   // 如果商品的isSale=1,说明商品上架状态
-  if(row.isSale == 1){
+  if (row.isSale == 1) {
     await reqCancelSale(row.id)
     ElMessage({
       type: 'success',
-      message:'下架成功'
+      message: '下架成功',
     })
     // 发请求获取更新后的列表
     getHasSku(pageNo.value)
-  }else {
+  } else {
     await reqCancelSale(row.id)
     ElMessage({
       type: 'success',
-      message:'上架成功'
+      message: '上架成功',
     })
     // 发请求获取更新后的列表
     getHasSku(pageNo.value)
@@ -104,14 +131,31 @@ const updateSale = async (row: SkuData) => {
 }
 const updateSku = () => {
   ElMessage({
-    type:'success',
-    message:'正在开发中...'
+    type: 'success',
+    message: '正在开发中...',
   })
 }
-const findSku = (row: any) => {}
-const deleteSku = (row: any) => {
-
+// 抽屉显示数据
+const findSku = (row: any) => {
+  drawer.value = true
 }
+const deleteSku = (row: any) => {}
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+</style>
