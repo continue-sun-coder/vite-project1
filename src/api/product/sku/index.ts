@@ -26,3 +26,6 @@ export const reqCancelSale = (skuId: number) => request.get<any, any>(API.CANCEL
 
 // 获取商品详情的接口（抽屉组件）
 export const reqSkuInfo = (skuId: number) => request.get<any, SkuInfoData>(API.SKUINFO_URL + skuId)
+
+// 删除商品
+export const reqRemoveSku = (skuId: number) => request.delete<any, any>(API.DELETESKU_URL + skuId)

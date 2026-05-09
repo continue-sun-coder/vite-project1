@@ -49,11 +49,7 @@
       @current-change="getHasSku"
     />
     <!-- 抽屉组件 -->
-    <el-drawer 
-      v-model="drawer" 
-      title="I am the title" 
-      direction="rtl" 
-      :before-close="handleClose">
+    <el-drawer v-model="drawer" direction="rtl">
       <template #header>
         <h4>商品详情</h4>
       </template>
@@ -97,8 +93,12 @@
         <el-row style="margin: 10px 0px">
           <el-col :span="6">商品图片</el-col>
           <el-col :span="18">
-            <el-carousel :interval="4000" type="card" height="200px">
-              <el-carousel-item v-for="item in skuInfo?.skuImageList" :key="item">
+            <el-carousel 
+              :interval="4000" 
+              type="card" 
+              height="200px"
+              indicator-position="outside">
+              <el-carousel-item v-for="item in skuInfo?.skuImageList" :key="item.id">
                 <img :src="item.imgUrl" alt="" style="width: 100%; height: 100%" />
               </el-carousel-item>
             </el-carousel>
@@ -110,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { reqCancelSale, reqSkuInfo, reqSkuList } from '@/api/product/sku'
+import { reqCancelSale, reqRemoveSku, reqSkuInfo, reqSkuList } from '@/api/product/sku'
 import type { SkuResponseData, SkuData, SkuInfoData } from '@/api/product/sku/type'
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
@@ -121,7 +121,7 @@ let pageSize = ref<number>(10)
 // 数据总条数
 let total = ref<number>(0)
 // 需展示的已有sku数据
-let skuArr = ref<SkuData[]>()
+let skuArr = ref<SkuData[]>([])
 // 控制抽屉组件的显示与隐藏
 let drawer = ref<boolean>(false)
 let skuInfo = ref<SkuData>()
@@ -138,7 +138,7 @@ const getHasSku = async (pager = 1) => {
   }
 }
 // 分页器下拉菜单（选择展示条数）的回调函数
-const handleSizeChange = (pageSize: number) => {
+const handleSizeChange = () => {
   getHasSku()
 }
 
@@ -175,49 +175,36 @@ const findSku = async (row: SkuData) => {
   drawer.value = true
   // 获取数据
   let result: SkuInfoData = await reqSkuInfo(row.id)
-  if(result.code == 200){
+  if (result.code == 200) {
     skuInfo.value = result.data
   }
 }
-const deleteSku = (row: any) => {}
+const deleteSku = async (id: number) => {
+  let result = await reqRemoveSku(id)
+  if(result.code == 200){
+    ElMessage({
+      type:'success',
+      message:'删除成功'
+    })
+    getHasSku(skuArr.value.length > 0 ? pageNo.value : pageNo.value-1)
+  }else{
+    ElMessage({
+      type:'error',
+      message:'删除失败'
+    })
+  }
+}
 </script>
 
 <style scoped>
-.el-carousel__item h3 {
-  color: #475669;
-  opacity: 0.75;
-  line-height: 200px;
-  margin: 0;
-  text-align: center;
-}
-
-.el-carousel__item:nth-child(2n) {
-  background-color: #99a9bf;
-}
-
-.el-carousel__item:nth-child(2n + 1) {
-  background-color: #d3dce6;
-}
-
-/* 调整指示条位置到图片底部外面 */
-:deep(.el-carousel__indicators) {
-  bottom: -50px;
-  top: auto !important;
-}
-
-/* 调整指示条颜色 - 使用更深的背景色 */
+/* 调整指示器自身的颜色和清晰度 */
 :deep(.el-carousel__indicator.is-active button) {
-  background-color: #333333 !important;
+  background-color: #409eff !important;
   opacity: 1;
 }
 
 :deep(.el-carousel__indicator button) {
-  background-color: #999999 !important;
+  background-color: #c0c4cc !important;
   opacity: 0.7;
-}
-
-/* 移除carousel-item的默认背景，让图片正常显示 */
-:deep(.el-carousel__item) {
-  background-color: transparent !important;
 }
 </style>
