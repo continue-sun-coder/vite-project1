@@ -86,8 +86,6 @@ const validatorUserName = (rule: any, value: any, callback: any) => {
   // callback: 校验完成后的回调函数，传入一个 Error 对象表示校验失败，传入 nothing 或 undefined 表示校验成功
   if (!value) {
     callback(new Error('请输入用户名'))
-  } else if (!/^[a-zA-Z]/.test(value)) {
-    callback(new Error('用户名必须以字母开头'))
   } else if (value.length < 3 || value.length > 20) {
     callback(new Error('用户名长度在 3 - 20 之间'))
   } else {
