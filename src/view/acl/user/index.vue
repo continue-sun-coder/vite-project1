@@ -3,7 +3,7 @@
     <el-card style="height: 80px">
       <el-form :inline="true" class="form">
         <el-form-item label="用户名：">
-          <el-input placeholder="请输入搜索用户名" v-model="keyword"></el-input>
+          <el-input placeholder="请输入用户名" v-model="keyword"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -210,7 +210,7 @@ const isIndeterminate = ref<boolean>(true)
 let selectIdArr = ref<User[]>([])
 // 收集用户输入关键字（搜索框）
 let keyword = ref<string>('')
-// 获取tabber小仓库
+// 获取setting小仓库
 let settingStore = useLayoutSettingStore()
 
 // 获取全部已有的用户信息
@@ -234,12 +234,12 @@ const addUser = () => {
   // 显示抽屉
   drawer.value = true
   // 清空数据
-    Object.assign(userParams, {
-      id: 0,
-      username: '',
-      name: '',
-      password: '',
-    })
+  Object.assign(userParams, {
+    id: 0,
+    username: '',
+    name: '',
+    password: '',
+  })
 
   // 清除上一次的错误提示信息
   nextTick(() => {
@@ -389,7 +389,7 @@ const confirmClick = async () => {
     drawer1.value = false
     // 获取更新完毕用户信息，根系完毕留在当前页
     getHasUser(pageNo.value)
-  }else {
+  } else {
     ElMessage({
       type: 'error',
       message: '分配角色失败',
@@ -429,7 +429,7 @@ const deleteSelectUser = async () => {
       message: '删除成功',
     })
     getHasUser(userArr.value.length > 0 ? pageNo.value : pageNo.value - 1)
-  }else {
+  } else {
     ElMessage({
       type: 'error',
       message: '删除失败',
