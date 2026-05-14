@@ -44,9 +44,7 @@
         ></el-table-column>
         <el-table-column label="操作" width="300px" align="center">
           <template v-slot="{ row }">
-            <el-button type="primary" size="small" icon="User">
-              分配权限
-            </el-button>
+            <el-button type="primary" size="small" icon="User" @click="setPermisson(row)">分配权限</el-button>
             <el-button type="warning" size="small" icon="Edit" @click="updateRole(row)">
               编辑
             </el-button>
@@ -74,14 +72,27 @@
         @current-change="getHasRole"
       />
     </el-card>
+    <!-- 添加、更新角色对话框 -->
+    <el-dialog v-model="dialogVisible" :title="roleParams.id ? '更新角色' : '添加角色'" width="500">
+        <el-form ref="formRef" :model="roleParams" :rules="rules" label-width="auto"> 
+            <el-form-item label="角色名称" prop="roleName">
+              <el-input v-model="roleParams.roleName" placeholder="请输入角色名称" />
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <el-button type="primary" plain @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="save">确定</el-button>
+        </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reqAllRoleList } from '@/api/acl/role';
-import type { RoleResponseData, Records } from '@/api/acl/role/type';
+import { reqAddOrUpdateRole, reqAllRoleList } from '@/api/acl/role'
+import type { RoleResponseData, Records, RoleData } from '@/api/acl/role/type'
+import { ElMessage, type FormInstance } from 'element-plus'
 // import useLayoutSettingStore from '@/store/modules/setting';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive, nextTick } from 'vue'
 
 // 收集用户输入关键字（搜索框）
 let keyword = ref<string>('')
@@ -95,6 +106,14 @@ let pageSize = ref<number>(5)
 let allRole = ref<Records>([])
 // 用户总个数
 let total = ref<number>(0)
+//对话框的显示与隐藏
+let dialogVisible = ref<boolean>(false) 
+// 收集角色数据（添加、更新角色对话框）
+let roleParams = reactive<RoleData>({
+  roleName: '',
+})
+// form组件实例
+let formRef = ref<FormInstance>()
 
 // 组件挂载完毕
 onMounted(() => {
@@ -106,7 +125,7 @@ onMounted(() => {
 const getHasRole = async (pager = 1) => {
   pageNo.value = pager
   let result: RoleResponseData = await reqAllRoleList(pageNo.value, pageSize.value, keyword.value)
-  if(result.code === 200) {
+  if (result.code === 200) {
     total.value = result.data.total
     allRole.value = result.data.records
   }
@@ -127,19 +146,66 @@ const reset = () => {
 
 // 添加角色功能：当用户点击添加角色按钮时，触发该函数
 const addRole = () => {
+  dialogVisible.value = true
+  Object.assign(roleParams, {
+    id: 0,
+    roleName: '',
+  })
+  // 清空表单校验状态
+  nextTick(() => {
+    formRef.value?.clearValidate('roleName')
+  })
 }
 
 // 编辑角色功能：当用户点击编辑按钮时，触发该函数
-const updateRole = (row: any) => {
+const updateRole = (row: RoleData) => {
+  dialogVisible.value = true
+  // 将当前行数据赋值给roleParams，展示在对话框中
+  Object.assign(roleParams, row)
+  // 清空表单校验状态
+  nextTick(() => {
+    formRef.value?.clearValidate('roleName')
+  })
+}
+
+// 保存功能：当用户点击对话框中的确定按钮时，触发该函数
+const save = async () => {
+  // 表单校验，校验成功，才发送请求
+  await formRef.value?.validate()
+  let result = await reqAddOrUpdateRole(roleParams)
+  if (result.code === 200) {
+    ElMessage({
+      type: 'success',
+      message: roleParams.id ? '更新角色成功' : '添加角色成功',
+    })
+    dialogVisible.value = false
+    getHasRole(roleParams.id ? pageNo.value : 1)
+  }
+}
+// 分配权限功能：当用户点击分配权限按钮时，触发该函数
+const setPermisson = async (row: RoleData) => {
+
 }
 
 // 删除角色功能：当用户点击删除按钮时，触发该函数
-const deleteRole = (id: number) => {
-}
+const deleteRole = (id: number) => {}
 
 // 分页器：当用户改变每页展示条数时，触发该函数
 const handleSizeChange = () => {
   getHasRole()
+}
+
+// 自定义校验规则
+const validatorRoleName = (rule: any, value: any, callBack: any) => {
+  if (value.trim().length >= 2) {
+    callBack()
+  } else {
+    callBack(new Error('角色名称至少两位'))
+  }
+}
+// 角色名称校验规则
+const rules = {
+  roleName: [{ required: true, trigger: 'blur', validator: validatorRoleName }],
 }
 </script>
 
