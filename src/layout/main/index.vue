@@ -10,13 +10,13 @@
 
 <script setup lang="ts">
 import { watch, ref, nextTick } from 'vue'
-import { useLayoutSettingStore } from '@/store/modules/setting'
+import useLayoutSettingStore from '@/store/modules/setting'
 let layoutSettingStore = useLayoutSettingStore()
 // 定义一个flag来控制组件的渲染
 let flag = ref(true)
 // 监听用户是否点击了更新按钮
 watch(
-  () => layoutSettingStore.refsh,
+  () => layoutSettingStore.refresh,
   () => {
     flag.value = false
     // 使用nextTick来确保DOM更新完成后再重新渲染组件

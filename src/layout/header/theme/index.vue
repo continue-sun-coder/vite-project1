@@ -26,14 +26,14 @@ defineOptions({
 })
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
-import { useLayoutSettingStore } from '@/store/modules/setting'
+import useLayoutSettingStore from '@/store/modules/setting'
 let layoutSettingStore = useLayoutSettingStore()
 let userStore = useUserStore()
 let $router = useRouter()
 let $route = useRoute()
 
 const updateRefsh = () => {
-  layoutSettingStore.refsh = !layoutSettingStore.refsh
+  layoutSettingStore.refresh = !layoutSettingStore.refresh
 }
 
 // 全屏按钮点击

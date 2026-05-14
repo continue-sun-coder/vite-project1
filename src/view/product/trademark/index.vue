@@ -15,7 +15,7 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
-        <template v-slot="{ row, $index }">
+        <template v-slot="{ row }">
           <el-button
             type="warning"
             size="small"
@@ -57,7 +57,6 @@
     v-model="dialogVisible"
     :title="trademarkParams.id ? '修改品牌' : '添加品牌'"
     width="500"
-    :before-close="handleClose"
   >
     <el-form ref="formRef" :model="trademarkParams" :rules="rules" label-width="auto">
       <el-form-item label="品牌名称" prop="tmName">
@@ -295,7 +294,6 @@ const deleteTrademark = async (id: number) => {
 // el-upload 上传 http 请求头，携带 Token
 // 引入用户相关的仓库
 import { useUserStore } from '@/store/modules/user'
-import { pa } from 'element-plus/es/locale/index.mjs'
 // 获取用户相关的小仓库：获取仓库内部token，登录成功以后携带给服务器
 const userStore = useUserStore()
 const headers = { Token: userStore.token }

@@ -48,7 +48,9 @@
         </el-table-column>
         <el-table-column prop="imgName" label="名称" align="center"></el-table-column>
         <el-table-column label="操作" align="center">
-          <el-button type="warning" size="default" @click="handler(row)">设置默认</el-button>
+          <template v-slot="{ row }">
+            <el-button type="warning" size="default" @click="handler(row)">设置默认</el-button>
+          </template>
         </el-table-column>
       </el-table>
     </el-form-item>

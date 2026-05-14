@@ -2,7 +2,7 @@
   <div class="breadcrumb-container">
     <!-- 左侧 -->
     <el-icon class="fold-icon" @click="changeIcon">
-      <component :is="layoutSettingStore.flod ? 'Fold' : 'Expand'"></component>
+      <component :is="layoutSettingStore.fold ? 'Fold' : 'Expand'"></component>
     </el-icon>
     <!-- 右侧面包屑 -->
     <el-breadcrumb separator-icon="ArrowRight">
@@ -29,7 +29,7 @@ import { useRoute } from 'vue-router'
 let layoutSettingStore = useLayoutSettingStore()
 // 定义一个方法来切换菜单状态
 const changeIcon = () => {
-  layoutSettingStore.flod = !layoutSettingStore.flod
+  layoutSettingStore.fold = !layoutSettingStore.fold
 }
 let $route = useRoute()
 

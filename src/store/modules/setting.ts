@@ -4,8 +4,10 @@ import { defineStore } from 'pinia'
 export const useLayoutSettingStore = defineStore('LayoutSettingStore', {
   state: () => {
     return {
-      flod: false, //菜单是否折叠
-      refsh: false, //是否刷新页面
+      fold: false, //菜单是否折叠
+      refresh: false, //是否刷新页面
     }
   },
 })
+
+export default useLayoutSettingStore

@@ -1,12 +1,12 @@
 <template>
   <div class="layout_container">
     <!-- 左侧菜单 -->
-    <div class="layout_slider" :class="{ flod: layoutSettingStore.flod }">
+    <div class="layout_slider" :class="{ fold: layoutSettingStore.fold }">
       <Logo></Logo>
       <el-scrollbar class="scrollbar">
         <el-menu
           :default-active="$route.path"
-          :collapse="layoutSettingStore.flod"
+          :collapse="layoutSettingStore.fold"
           background-color="#001529"
           text-color="white"
           active-text-color="#409EFF"
@@ -18,11 +18,11 @@
       </el-scrollbar>
     </div>
     <!-- 头部导航 -->
-    <div class="layout_header" :class="{ flod: layoutSettingStore.flod }">
+    <div class="layout_header" :class="{ fold: layoutSettingStore.fold }">
       <NavHeader></NavHeader>
     </div>
     <!-- 内容展示区 -->
-    <div class="layout_main" :class="{ flod: layoutSettingStore.flod }">
+    <div class="layout_main" :class="{ fold: layoutSettingStore.fold }">
       <Main></Main>
     </div>
   </div>
@@ -36,7 +36,7 @@ import NavHeader from './header/index.vue'
 
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
-import { useLayoutSettingStore } from '@/store/modules/setting'
+import useLayoutSettingStore from '@/store/modules/setting'
 let userStore = useUserStore()
 let $route = useRoute()
 let layoutSettingStore = useLayoutSettingStore()
