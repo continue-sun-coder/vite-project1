@@ -1,13 +1,20 @@
 @import './reset.scss';
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   width: 10px;
+  height: 6px;
 }
-::-webkit-scrollbar-track{
-  background: $base-menu-bg-color;
+
+::-webkit-scrollbar-track {
+  background: #f5f7fa; // 浅灰色轨道
+  border-radius: 3px;
 }
-::-webkit-scrollbar-thumb{
-  width: 10px;
-  background-color: pink;
-  border-radius: 10px;
+
+::-webkit-scrollbar-thumb {
+  background: #dcdfe6; // Element Plus 默认边框色
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c0c4cc; // 悬浮时变深
 }
