@@ -2,7 +2,35 @@
   <div class="theme_container">
     <el-button size="small" icon="Refresh" circle @click="updateRefsh"></el-button>
     <el-button size="small" icon="FullScreen" circle @click="fullScreen"></el-button>
-    <el-button size="small" icon="Setting" circle></el-button>
+    <el-popover placement="bottom" title="主题设置" :width="300" trigger="hover">
+      <!-- 表单元素 -->
+      <el-form>
+        <el-form-item label="主题颜色">
+          <!-- teleported: 是否将 popover 的下拉列表渲染至 body 下，false的目的是将其渲染只 el-popover 下，防止 el-popover 自动关闭 -->
+          <el-color-picker
+            v-model="color"
+            show-alpha
+            :predefine="predefineColors"
+            size="small"
+            :teleported="false"
+            @change="setColor"
+          />
+        </el-form-item>
+        <el-form-item label="暗黑模式">
+          <el-switch
+            @change="changeDark"
+            v-model="dark"
+            size="small"
+            inline-prompt
+            active-icon="MoonNight"
+            inactive-icon="Sunny"
+          />
+        </el-form-item>
+      </el-form>
+      <template #reference>
+        <el-button size="small" icon="Setting" circle></el-button>
+      </template>
+    </el-popover>
     <img :src="userStore.avatar" alt="" />
     <el-dropdown>
       <span class="el-dropdown-link">
@@ -27,10 +55,13 @@ defineOptions({
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
 import useLayoutSettingStore from '@/store/modules/setting'
+import { ref } from 'vue'
 let layoutSettingStore = useLayoutSettingStore()
 let userStore = useUserStore()
 let $router = useRouter()
 let $route = useRoute()
+// 收集暗黑模式开关的数据
+let dark = ref<boolean>(false)
 
 const updateRefsh = () => {
   layoutSettingStore.refresh = !layoutSettingStore.refresh
@@ -54,6 +85,17 @@ const logout = async () => {
   // 3.跳转到登录页
   await userStore.userLogout()
   $router.push({ path: '/login', query: { redirect: $route.path } })
+}
+
+// 暗黑模式开关
+const changeDark = () => {
+  // 获取html根节点
+  const html = document.documentElement
+  if (dark.value) {
+    html.classList.add('dark')
+  } else {
+    html.classList.remove('dark')
+  }
 }
 </script>
 
