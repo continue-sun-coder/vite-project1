@@ -205,6 +205,7 @@ const reset = () => {
 // 添加角色功能：当用户点击添加角色按钮时，触发该函数
 const addRole = () => {
   dialogVisible.value = true
+  
   Object.assign(roleParams, {
     id: 0,
     roleName: '',
