@@ -103,16 +103,16 @@
           label：节点显示文本的字段名称，默认为 label
           disabled：节点禁用状态的字段名称，默认为 disabled
         -->
-          <el-tree
-            style="max-width: 600px"
-            :data="menuArr"
-            :props="defaultProps"
-            show-checkbox 
-            :default-expand-all="true"
-            :default-checked-keys="selectArr"
-            node-key="id"
-            ref="tree"
-          />
+        <el-tree
+          style="max-width: 600px"
+          :data="menuArr"
+          :props="defaultProps"
+          show-checkbox
+          :default-expand-all="true"
+          :default-checked-keys="selectArr"
+          node-key="id"
+          ref="tree"
+        />
       </template>
       <template #footer>
         <div style="flex: auto">
@@ -125,8 +125,20 @@
 </template>
 
 <script setup lang="ts">
-import { reqAddOrUpdateRole, reqAllMenuList, reqAllRoleList, reqRemoveRole, reqSetPermission } from '@/api/acl/role'
-import type { RoleResponseData, Records, RoleData, MenuResponseData, MenuList } from '@/api/acl/role/type'
+import {
+  reqAddOrUpdateRole,
+  reqAllMenuList,
+  reqAllRoleList,
+  reqRemoveRole,
+  reqSetPermission,
+} from '@/api/acl/role'
+import type {
+  RoleResponseData,
+  Records,
+  RoleData,
+  MenuResponseData,
+  MenuList,
+} from '@/api/acl/role/type'
 import { ElMessage, type FormInstance, type TreeInstance } from 'element-plus'
 import type { TreeKey } from 'element-plus/es/components/tree/src/tree.type.mjs'
 // import useLayoutSettingStore from '@/store/modules/setting';
