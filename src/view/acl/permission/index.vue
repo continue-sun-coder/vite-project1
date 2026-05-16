@@ -25,8 +25,8 @@
           >
             编辑
           </el-button>
-          <el-popconfirm 
-            :title="`确定删除${row.name}？`" 
+          <el-popconfirm
+            :title="`确定删除${row.name}？`"
             width="260px"
             @confirm="removePermission(row.id)"
           >
@@ -67,7 +67,12 @@
 
 <script setup lang="ts">
 import { reqAddOrUpdateMenu, reqAllPermisson, reqRemoveMenu } from '@/api/acl/menu'
-import type { MenuParams, Permission, PermissionList, PermissionResponsData } from '@/api/acl/menu/type'
+import type {
+  MenuParams,
+  Permission,
+  PermissionList,
+  PermissionResponsData,
+} from '@/api/acl/menu/type'
 import { ElMessage } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
 
@@ -80,7 +85,7 @@ let menuData = reactive<MenuParams>({
   name: '',
   code: '',
   level: 1,
-  pid: 0
+  pid: 0,
 })
 // 表单宽度
 let formLabelWidth = '80px'
@@ -102,20 +107,20 @@ const getHashPermission = async () => {
 const addPermission = (row: Permission) => {
   // 打开对话框
   dialogVisible.value = true
-  
+
   Object.assign(menuData, {
     id: 0,
     name: '',
     code: '',
     level: row.level + 1,
-    pid: row.id
+    pid: row.id,
   })
 }
 // 编辑菜单按钮的点击事件
 const updatePermission = (row: Permission) => {
   // 打开对话框
   dialogVisible.value = true
-  
+
   // 将已有菜单数据赋值给 menuData 对象
   Object.assign(menuData, row)
 }
@@ -136,7 +141,7 @@ const save = async () => {
     })
     // 获取最新的菜单数据，展示在页面上
     getHashPermission()
-  }else {
+  } else {
     ElMessage({
       type: 'error',
       message: menuData.id ? '更新失败' : '添加失败',
@@ -154,7 +159,7 @@ const removePermission = async (id: number) => {
     })
     // 获取最新的菜单数据，展示在页面上
     getHashPermission()
-  }else {
+  } else {
     ElMessage({
       type: 'error',
       message: '删除失败',
