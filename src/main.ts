@@ -11,6 +11,7 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import globalComponents from '@/components'
 import router from '@/router'
 import pinia from '@/store'
+// 引入路由鉴权文件
 import '@/permission'
 import App from '@/App.vue'
 
@@ -19,4 +20,6 @@ app.use(ElementPlus, { locale: zhCn })
 app.use(globalComponents)
 app.use(pinia)
 app.use(router)
+import { isHasButton } from './directive/has'
+isHasButton(app) // 注册全局指令
 app.mount('#app')

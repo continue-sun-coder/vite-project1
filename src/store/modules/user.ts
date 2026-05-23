@@ -8,8 +8,27 @@ import type { userState } from './types/type'
 import { GET_TOKEN, SET_TOKEN, REMOVE_TOKEN } from '@/utils/token'
 
 // 引入路由（常量路由），因为以后
-import { constantRoutes } from '@/router/routes'
+import { constantRoute, asyncRoute, anyRoute } from '@/router/routes'
+// 引入路由实例
+import router from '@/router'
+// 引入深拷贝方法
+//@ts-expect-error 没有ts类型
+import cloneDeep from 'lodash/cloneDeep'
 // import { reactive } from 'vue'
+
+// 用于过滤当前用户需要展示的异步路由
+function filterAsyncRoute(asyncRoute: any, routes: any) {
+  return asyncRoute.filter((item: any) => {
+    if (routes.includes(item.name)) {
+      //
+      if (item.children && item.children.length > 0) {
+        item.children = filterAsyncRoute(item.children, routes)
+      }
+      return true
+    }
+  })
+}
+
 // 创建用户小仓库
 export const useUserStore = defineStore('User', {
   // 小仓库存储数据的地方
@@ -17,9 +36,10 @@ export const useUserStore = defineStore('User', {
     return {
       //直接获取token，刷新页面时，vuex中的token会丢失，所以需要从本地存储获取token
       token: GET_TOKEN(), //用户唯一标识token
-      menuRoutes: constantRoutes,
+      menuRoutes: constantRoute as [],
       username: '',
       avatar: '',
+      buttons: [],
     }
   },
   // 异步|逻辑的地方
@@ -49,6 +69,15 @@ export const useUserStore = defineStore('User', {
       if (res.code == 200) {
         this.username = res.data.name
         this.avatar = res.data.avatar
+        this.buttons = res.data.buttons
+        // 计算出当前用户需要展示的异步路由
+        const userAsyncRoute = filterAsyncRoute(cloneDeep(asyncRoute), res.data.routes)
+        this.menuRoutes = [...constantRoute, ...userAsyncRoute, ...anyRoute]
+        // 目前路由管理的只有常量路由，用户计算完毕的异步路由和任意路由需要动态添加
+        const newRoutes = [...userAsyncRoute, ...anyRoute]
+        newRoutes.forEach((route) => {
+          router.addRoute(route)
+        })
         return 'ok'
       } else {
         return Promise.reject(new Error(res.message || '获取用户信息失败'))
@@ -64,6 +93,15 @@ export const useUserStore = defineStore('User', {
         this.avatar = ''
         // 本地存储也要清除
         REMOVE_TOKEN()
+
+        // 清除之前动态添加的路由
+        const routes = router.getRoutes()
+        routes.forEach(route => {
+          if (route.name && !constantRoute.find(r => r.name === route.name)) {
+            router.removeRoute(route.name)
+          }
+        })
+
         return 'ok'
       } else {
         return Promise.reject(new Error(result.message || '退出登录失败'))
