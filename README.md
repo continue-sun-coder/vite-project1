@@ -365,9 +365,8 @@ routes.forEach((route) => {
 ## 联系方式
 
 **作者**: 猫罐头开发团队  
-**邮箱**: dev@meiguanqi.com  
-**GitHub**: https://github.com/meiguanqi-management  
-**项目地址**: https://github.com/meiguanqi-management/vite-project
+**邮箱**: kunlan.huang@outlook.com  
+**GitHub**: https://github.com/continue-sun-coder/vite-project1.git
 
 ## 使用说明
 
