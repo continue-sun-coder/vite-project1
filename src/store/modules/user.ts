@@ -96,8 +96,8 @@ export const useUserStore = defineStore('User', {
 
         // 清除之前动态添加的路由
         const routes = router.getRoutes()
-        routes.forEach(route => {
-          if (route.name && !constantRoute.find(r => r.name === route.name)) {
+        routes.forEach((route) => {
+          if (route.name && !constantRoute.find((r) => r.name === route.name)) {
             router.removeRoute(route.name)
           }
         })
